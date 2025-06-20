@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fightgym_app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    networks:
+      - fightgym
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    container_name: fightgym_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: fightgym
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - fightgym
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: fightgym_phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: root
+    networks:
+      - fightgym
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: fightgym_nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - fightgym
+
+volumes:
+  mysql_data:
+
+networks:
+  fightgym:
+    driver: bridge
