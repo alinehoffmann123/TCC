@@ -1,11 +1,100 @@
-@import 'tailwindcss';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+/* Cores customizadas */
+:root {
+    --bordo-dark: #4B001E;
+    --bordo-hover: #73002A;
+    --gray-light: #CCCCCC;
+    --gray-dark: #333333;
+}
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+/* Classes customizadas */
+.bg-bordo-dark {
+    background-color: var(--bordo-dark);
+}
+
+.bg-bordo-hover {
+    background-color: var(--bordo-hover);
+}
+
+.hover\:bg-bordo-hover:hover {
+    background-color: var(--bordo-hover);
+}
+
+.text-bordo-dark {
+    color: var(--bordo-dark);
+}
+
+.text-bordo-hover {
+    color: var(--bordo-hover);
+}
+
+.hover\:text-bordo-hover:hover {
+    color: var(--bordo-hover);
+}
+
+.border-bordo-dark {
+    border-color: var(--bordo-dark);
+}
+
+.focus\:border-bordo-dark:focus {
+    border-color: var(--bordo-dark);
+}
+
+.focus\:ring-bordo-dark:focus {
+    --tw-ring-color: var(--bordo-dark);
+}
+
+.bg-gray-light {
+    background-color: var(--gray-light);
+}
+
+.border-gray-light {
+    border-color: var(--gray-light);
+}
+
+.text-gray-dark {
+    color: var(--gray-dark);
+}
+
+.shadow-bordo-dark\/10 {
+    --tw-shadow-color: rgb(75 0 30 / 0.1);
+    --tw-shadow: var(--tw-shadow-colored);
+}
+
+/* Animações personalizadas */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* Estilos para inputs */
+input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--bordo-dark);
+}
+
+/* Checkbox personalizado */
+input[type="checkbox"]:checked {
+    background-color: var(--bordo-dark);
+    border-color: var(--bordo-dark);
+}
+
+/* Responsividade adicional */
+@media (max-width: 1024px) {
+    .lg\:w-1\/2 {
+        width: 100%;
+    }
 }
