@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Editar Vídeo Aula')
+@section('title', 'Editar Vídeo Aula - Sistema de Gestão')
 
 @section('content')
 <div class="animate-fade-in">
@@ -34,7 +34,6 @@
         </div>
     @endif
 
-    <!-- Formulário -->
     <div class="bg-white rounded-xl shadow-lg border border-gray-light animate-fade-in animate-delay-200">
         <form action="{{ route('video-aulas.update', $videoAula->id) }}" method="POST" class="p-6 space-y-6">
             @csrf
@@ -48,7 +47,7 @@
                 </h3>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                   <div>
+                    <div>
                         <label for="titulo" class="block text-sm font-medium text-gray-dark mb-2">
                             Título da Vídeo Aula <span class="text-red-500">*</span>
                         </label>

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('youtube_id'); 
             $table->integer('duracao_minutos')->nullable();
             $table->enum('nivel', ['iniciante', 'intermediario', 'avancado', 'misto']);
-            $table->enum('modalidade', ['gi', 'no-gi', 'mma', 'defesa-pessoal']);
+            $table->enum('modalidade', ['gi','no-gi','gracie','luta-livre','combate']);
             $table->char('excluido', 1)->default('N');
             $table->timestamps();
         });

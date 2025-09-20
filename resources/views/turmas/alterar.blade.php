@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Nova Turma')
+@section('title', 'Editar Turma - Sistema de Gestão')
 
 @section('content')
 <div class="animate-fade-in">
     <div class="flex justify-between items-center mb-6">
         <div>
-            <h2 class="text-3xl font-bold text-gray-dark">Nova Turma</h2>
-            <p class="text-gray-dark/70 mt-1">Cadastre uma nova turma para organizar os treinos</p>
+            <h2 class="text-3xl font-bold text-gray-dark">Editar Turma: <span class="text-bordo-dark">{{ $aTurmas->nome }}</span></h2>
+            <p class="text-gray-dark/70 mt-1">Atualize as informações da turma.</p>
         </div>
         <a href="{{ route('turmas.index') }}" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-md shadow-md transition-colors duration-200 flex items-center space-x-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -16,6 +16,12 @@
             <span>Voltar</span>
         </a>
     </div>
+
+    @if(session('success'))
+        <div class="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg shadow-md animate-fade-in animate-delay-100">
+            {{ session('success') }}
+        </div>
+    @endif
 
     @if ($errors->any())
         <div class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg shadow-md animate-fade-in animate-delay-100">
@@ -27,11 +33,10 @@
             </ul>
         </div>
     @endif
-
     <div class="bg-white rounded-xl shadow-lg border border-gray-light animate-fade-in animate-delay-200">
-        <form action="{{ route('turmas.store') }}" method="POST" class="p-6 space-y-6">
+        <form action="{{ route('turmas.update', $aTurmas->id) }}" method="POST" class="p-6 space-y-6">
             @csrf
-
+            @method('PUT')
             <div class="border-b border-gray-light pb-6">
                 <h3 class="text-xl font-semibold text-gray-dark mb-4 flex items-center">
                     <svg class="w-6 h-6 mr-2 text-bordo-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -49,7 +54,7 @@
                             type="text" 
                             id="nome" 
                             name="nome" 
-                            value="{{ old('nome') }}"
+                            value="{{ old('nome', $aTurmas->nome) }}"
                             class="w-full px-3 py-2 border border-gray-light rounded-md focus:outline-none focus:ring-2 focus:ring-bordo-dark focus:border-bordo-dark text-gray-dark @error('nome') border-red-500 @enderror"
                             placeholder="Ex: Jiu-Jitsu Iniciante - Manhã"
                             required
@@ -58,25 +63,36 @@
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
-
                     <div>
-                        <label for="instrutor" class="block text-sm font-medium text-gray-dark mb-2">
+                        <label for="instrutor_id" class="block text-sm font-medium text-gray-dark mb-2">
                             Instrutor <span class="text-red-500">*</span>
                         </label>
-                        <input 
-                            type="text" 
-                            id="instrutor" 
-                            name="instrutor" 
-                            value="{{ old('instrutor') }}"
-                            class="w-full px-3 py-2 border border-gray-light rounded-md focus:outline-none focus:ring-2 focus:ring-bordo-dark focus:border-bordo-dark text-gray-dark @error('instrutor') border-red-500 @enderror"
-                            placeholder="Ex: Professor João Silva"
-                            required
-                        >
-                        @error('instrutor')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
 
+                        @if(($aProfessores ?? collect())->count() > 0)
+                            <select
+                                id="instrutor_id"
+                                name="instrutor_id"
+                                required
+                                class="w-full px-3 py-2 border border-gray-light rounded-md focus:outline-none focus:ring-2 focus:ring-bordo-dark focus:border-bordo-dark text-gray-dark @error('instrutor_id') border-red-500 @enderror"
+                            >
+                                <option value="">Selecione um professor</option>
+                                @foreach($aProfessores as $prof)
+                                    <option value="{{ $prof->id }}"
+                                        {{ old('instrutor_id', $aTurmas->instrutor_id) == $prof->id ? 'selected' : '' }}>
+                                        {{ $prof->nome }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('instrutor_id')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        @else
+                            <div class="p-3 bg-yellow-50 border border-yellow-200 rounded-md text-sm text-yellow-800">
+                                Nenhum professor cadastrado ainda.
+                                <a href="{{ route('alunos.create') }}" class="underline font-medium">Cadastrar professor</a>
+                            </div>
+                        @endif
+                    </div>
                     <div>
                         <label for="modalidade" class="block text-sm font-medium text-gray-dark mb-2">
                             Modalidade <span class="text-red-500">*</span>
@@ -88,10 +104,11 @@
                             required
                         >
                             <option value="">Selecione uma modalidade</option>
-                            <option value="gi" {{ old('modalidade') == 'gi' ? 'selected' : '' }}>🥋 Gi (Kimono)</option>
-                            <option value="no-gi" {{ old('modalidade') == 'no-gi' ? 'selected' : '' }}>🤼 No-Gi (Sem Kimono)</option>
-                            <option value="mma" {{ old('modalidade') == 'mma' ? 'selected' : '' }}>🥊 MMA</option>
-                            <option value="defesa-pessoal" {{ old('modalidade') == 'defesa-pessoal' ? 'selected' : '' }}>🛡️ Defesa Pessoal</option>
+                            <option value="gi" {{ old('modalidade', $aTurmas->modalidade) == 'gi' ? 'selected' : '' }}> Gi (Kimono)</option>
+                            <option value="no-gi" {{ old('modalidade', $aTurmas->modalidade) == 'no-gi' ? 'selected' : '' }}>No-Gi (Sem Kimono)</option>
+                            <option value="gracie" {{ old('modalidade', $aTurmas->modalidade) == 'gracie' ? 'selected' : '' }}>Gracie Jiu Jitsu</option>
+                            <option value="luta-livre" {{ old('modalidade', $aTurmas->modalidade) == 'luta-livre' ? 'selected' : '' }}>Luta Livre</option>
+                            <option value="combate" {{ old('modalidade', $aTurmas->modalidade) == 'combate' ? 'selected' : '' }}>Jiu Jitsu Combate</option>
                         </select>
                         @error('modalidade')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -108,10 +125,10 @@
                             required
                         >
                             <option value="">Selecione o nível</option>
-                            <option value="iniciante" {{ old('nivel') == 'iniciante' ? 'selected' : '' }}>🟢 Iniciante</option>
-                            <option value="intermediario" {{ old('nivel') == 'intermediario' ? 'selected' : '' }}>🟡 Intermediário</option>
-                            <option value="avancado" {{ old('nivel') == 'avancado' ? 'selected' : '' }}>🔴 Avançado</option>
-                            <option value="misto" {{ old('nivel') == 'misto' ? 'selected' : '' }}>🔵 Misto</option>
+                            <option value="iniciante" {{ old('nivel', $aTurmas->nivel) == 'iniciante' ? 'selected' : '' }}>🟢 Iniciante</option>
+                            <option value="intermediario" {{ old('nivel', $aTurmas->nivel) == 'intermediario' ? 'selected' : '' }}>🟡 Intermediário</option>
+                            <option value="avancado" {{ old('nivel', $aTurmas->nivel) == 'avancado' ? 'selected' : '' }}>🔴 Avançado</option>
+                            <option value="misto" {{ old('nivel', $aTurmas->nivel) == 'misto' ? 'selected' : '' }}>🔵 Misto</option>
                         </select>
                         @error('nivel')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -119,7 +136,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="border-b border-gray-light pb-6">
                 <h3 class="text-xl font-semibold text-gray-dark mb-4 flex items-center">
                     <svg class="w-6 h-6 mr-2 text-bordo-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -137,7 +153,7 @@
                             type="time" 
                             id="horario_inicio" 
                             name="horario_inicio" 
-                            value="{{ old('horario_inicio') }}"
+                            value="{{ old('horario_inicio', $aTurmas->horario_inicio->format('H:i')) }}"
                             class="w-full px-3 py-2 border border-gray-light rounded-md focus:outline-none focus:ring-2 focus:ring-bordo-dark focus:border-bordo-dark text-gray-dark @error('horario_inicio') border-red-500 @enderror"
                             required
                         >
@@ -153,7 +169,7 @@
                             type="time" 
                             id="horario_fim" 
                             name="horario_fim" 
-                            value="{{ old('horario_fim') }}"
+                            value="{{ old('horario_fim', $aTurmas->horario_fim->format('H:i')) }}"
                             class="w-full px-3 py-2 border border-gray-light rounded-md focus:outline-none focus:ring-2 focus:ring-bordo-dark focus:border-bordo-dark text-gray-dark @error('horario_fim') border-red-500 @enderror"
                             required
                         >
@@ -162,32 +178,35 @@
                         @enderror
                     </div>
                 </div>
+
                 <div>
                     <label class="block text-sm font-medium text-gray-dark mb-3">
                         Dias da Semana <span class="text-red-500">*</span>
                     </label>
                     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
                         @php
-                            $dias = [
-                                'segunda' => 'Segunda',
-                                'terca' => 'Terça',
-                                'quarta' => 'Quarta',
-                                'quinta' => 'Quinta',
-                                'sexta' => 'Sexta',
-                                'sabado' => 'Sábado',
-                                'domingo' => 'Domingo'
+                            $aDias = [
+                                  'segunda' => 'Segunda'
+                                , 'terca'   => 'Terça'
+                                , 'quarta'  => 'Quarta'
+                                , 'quinta'  => 'Quinta'
+                                , 'sexta'   => 'Sexta'
+                                , 'sabado'  => 'Sábado'
+                                , 'domingo' => 'Domingo'
                             ];
+
+                            $bSelecionarDia = old('dias_semana', $aTurmas->dias_semana);
                         @endphp
-                        @foreach($dias as $value => $label)
-                        <label class="flex items-center p-3 border border-gray-light rounded-lg hover:bg-gray-50 cursor-pointer transition-colors duration-200 {{ in_array($value, old('dias_semana', [])) ? 'bg-bordo-dark/10 border-bordo-dark' : '' }}">
+                        @foreach($aDias as $sValores => $sNome)
+                        <label class="flex items-center p-3 border border-gray-light rounded-lg hover:bg-gray-50 cursor-pointer transition-colors duration-200 {{ in_array($sValores, $bSelecionarDia) ? 'bg-bordo-dark/10 border-bordo-dark' : '' }}">
                             <input 
                                 type="checkbox" 
                                 name="dias_semana[]" 
-                                value="{{ $value }}"
+                                value="{{ $sValores }}"
                                 class="mr-2 text-bordo-dark focus:ring-bordo-dark border-gray-300 rounded"
-                                {{ in_array($value, old('dias_semana', [])) ? 'checked' : '' }}
+                                {{ in_array($sValores, $bSelecionarDia) ? 'checked' : '' }}
                             >
-                            <span class="text-sm font-medium text-gray-dark">{{ $label }}</span>
+                            <span class="text-sm font-medium text-gray-dark">{{ $sNome }}</span>
                         </label>
                         @endforeach
                     </div>
@@ -214,7 +233,7 @@
                             type="number" 
                             id="capacidade_maxima" 
                             name="capacidade_maxima" 
-                            value="{{ old('capacidade_maxima', 20) }}"
+                            value="{{ old('capacidade_maxima', $aTurmas->capacidade_maxima) }}"
                             min="1" 
                             max="50"
                             class="w-full px-3 py-2 border border-gray-light rounded-md focus:outline-none focus:ring-2 focus:ring-bordo-dark focus:border-bordo-dark text-gray-dark @error('capacidade_maxima') border-red-500 @enderror"
@@ -235,9 +254,9 @@
                             class="w-full px-3 py-2 border border-gray-light rounded-md focus:outline-none focus:ring-2 focus:ring-bordo-dark focus:border-bordo-dark text-gray-dark @error('status') border-red-500 @enderror"
                             required
                         >
-                            <option value="ativa" {{ old('status', 'ativa') == 'ativa' ? 'selected' : '' }}>🟢 Ativa</option>
-                            <option value="inativa" {{ old('status') == 'inativa' ? 'selected' : '' }}>🔴 Inativa</option>
-                            <option value="pausada" {{ old('status') == 'pausada' ? 'selected' : '' }}>🟡 Pausada</option>
+                            <option value="ativa" {{ old('status', $aTurmas->status) == 'ativa' ? 'selected' : '' }}>🟢 Ativa</option>
+                            <option value="inativa" {{ old('status', $aTurmas->status) == 'inativa' ? 'selected' : '' }}>🔴 Inativa</option>
+                            <option value="pausada" {{ old('status', $aTurmas->status) == 'pausada' ? 'selected' : '' }}>🟡 Pausada</option>
                         </select>
                         @error('status')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -263,7 +282,7 @@
                         rows="4"
                         class="w-full px-3 py-2 border border-gray-light rounded-md focus:outline-none focus:ring-2 focus:ring-bordo-dark focus:border-bordo-dark text-gray-dark @error('observacoes') border-red-500 @enderror"
                         placeholder="Informações adicionais sobre a turma, requisitos especiais, etc."
-                    >{{ old('observacoes') }}</textarea>
+                    >{{ old('observacoes', $aTurmas->observacoes) }}</textarea>
                     <p class="mt-1 text-xs text-gray-dark/70">Máximo de 1000 caracteres</p>
                     @error('observacoes')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -278,7 +297,7 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                     </svg>
-                    <span>Criar Turma</span>
+                    <span>Salvar Alterações</span>
                 </button>
             </div>
         </form>
@@ -316,7 +335,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const checkedBoxes = document.querySelectorAll('input[name="dias_semana[]"]:checked');
             if (checkedBoxes.length === 0) {
                 alert('Selecione pelo menos um dia da semana.');
-                this.checked = true;
+                this.checked = true; // Reverte a seleção se for a última desmarcada
             }
         });
     });

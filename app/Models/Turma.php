@@ -70,36 +70,46 @@ class Turma extends Model
     /**
      * Retorna os dias da semana formatados
      */
-    public function getDiasSemanaFormatadosAttribute()
-    {
-        $diasMap = [
-            'segunda' => 'Seg',
-            'terca' => 'Ter',
-            'quarta' => 'Qua',
-            'quinta' => 'Qui',
-            'sexta' => 'Sex',
-            'sabado' => 'Sáb',
-            'domingo' => 'Dom'
+    public function getDiasSemanaFormatadosAttribute() {
+        $aDiasDaSemana = [
+             'segunda'  => 'Seg'
+            , 'terca'   => 'Ter'
+            , 'quarta'  => 'Qua'
+            , 'quinta'  => 'Qui'
+            , 'sexta'   => 'Sex'
+            , 'sabado'  => 'Sáb'
+            , 'domingo' => 'Dom'
         ];
 
-        return collect($this->dias_semana)->map(function ($dia) use ($diasMap) {
-            return $diasMap[$dia] ?? $dia;
+        return collect($this->dias_semana)->map(function ($sDia) use ($aDiasDaSemana) {
+            return $aDiasDaSemana[$sDia] ?? $sDia;
         })->implode(', ');
     }
 
     /**
      * Scope para turmas ativas (não excluídas)
      */
-    public function scopeAtivas($query)
-    {
-        return $query->where('excluido', 'N');
+    public function scopeAtivas($rQuery) {
+        return $rQuery->where('excluido', 'N');
     }
 
     /**
      * Scope para turmas excluídas
      */
-    public function scopeExcluidas($query)
-    {
-        return $query->where('excluido', 'S');
+    public function scopeExcluidas($rQuery) {
+        return $rQuery->where('excluido', 'S');
+    }
+
+    public function instrutor() {
+        return $this->belongsTo(Aluno::class, 'instrutor_id');
+    }
+
+    /**
+     * Nome do instrutor “smart”:
+     * 1) usa a relação (novo modelo)
+     * 2) cai pro texto legado se existir
+     */
+    public function getInstrutorNomeAttribute(): ?string {
+        return $this->instrutor?->nome ?? ($this->instrutor ?? null);
     }
 }

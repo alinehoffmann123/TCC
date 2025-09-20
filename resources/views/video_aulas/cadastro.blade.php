@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Nova Vídeo Aula')
+@section('title', 'Nova Vídeo Aula - Sistema de Gestão')
 
 @section('content')
 <div class="animate-fade-in">
@@ -57,6 +57,7 @@
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
+
                     <div>
                         <label for="url_youtube" class="block text-sm font-medium text-gray-dark mb-2">
                             URL do Vídeo (YouTube) <span class="text-red-500">*</span>
@@ -74,6 +75,7 @@
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
+
                     <div>
                         <label for="duracao_minutos" class="block text-sm font-medium text-gray-dark mb-2">
                             Duração (minutos)
@@ -93,6 +95,7 @@
                         @enderror
                     </div>
                 </div>
+
                 <div class="mt-6">
                     <label for="descricao" class="block text-sm font-medium text-gray-dark mb-2">
                         Descrição
@@ -110,6 +113,7 @@
                     @enderror
                 </div>
             </div>
+
             <div class="border-b border-gray-light pb-6">
                 <h3 class="text-xl font-semibold text-gray-dark mb-4 flex items-center">
                     <svg class="w-6 h-6 mr-2 text-bordo-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -130,15 +134,17 @@
                             required
                         >
                             <option value="">Selecione uma modalidade</option>
-                            <option value="gi" {{ old('modalidade') == 'gi' ? 'selected' : '' }}>🥋 Gi (Kimono)</option>
-                            <option value="no-gi" {{ old('modalidade') == 'no-gi' ? 'selected' : '' }}>🤼 No-Gi (Sem Kimono)</option>
-                            <option value="mma" {{ old('modalidade') == 'mma' ? 'selected' : '' }}>🥊 MMA</option>
-                            <option value="defesa-pessoal" {{ old('modalidade') == 'defesa-pessoal' ? 'selected' : '' }}>🛡️ Defesa Pessoal</option>
+                            <option value="gi" {{ old('modalidade') == 'gi' ? 'selected' : '' }}>Gi (Kimono)</option>
+                            <option value="no-gi" {{ old('modalidade') == 'no-gi' ? 'selected' : '' }}>No-Gi (Sem Kimono)</option>
+                            <option value="gracie" {{ old('modalidade') == 'gracie' ? 'selected' : '' }}> Gracie</option>
+                            <option value="luta-livre" {{ old('modalidade') == 'luta-livre' ? 'selected' : '' }}>Luta Livre</option>
+                            <option value="combate" {{ old('modalidade') == 'combate' ? 'selected' : '' }}>Combate</option>
                         </select>
                         @error('modalidade')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
+
                     <div>
                         <label for="nivel" class="block text-sm font-medium text-gray-dark mb-2">
                             Nível <span class="text-red-500">*</span>
@@ -161,6 +167,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="flex justify-end space-x-4 pt-6 border-t border-gray-light">
                 <a href="{{ route('video-aulas.index') }}" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-md shadow-md transition-colors duration-200">
                     Cancelar

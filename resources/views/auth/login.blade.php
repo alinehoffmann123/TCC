@@ -211,19 +211,6 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="flex items-center justify-between text-sm">
-                            <label class="flex items-center space-x-2 text-gray-dark/70">
-                                <input 
-                                    type="checkbox" 
-                                    name="remember"
-                                    class="rounded border-gray-light text-bordo-dark focus:ring-bordo-dark"
-                                >
-                                <span>Lembrar-me</span>
-                            </label>
-                            <a href="{{ route('password.request') }}" class="text-bordo-dark hover:text-bordo-hover hover:underline transition-colors">
-                                Esqueci minha senha
-                            </a>
-                        </div>
                         <button 
                             type="submit"
                             class="w-full bg-bordo-dark hover:bg-bordo-hover text-white font-semibold py-3 px-4 rounded-md transition-colors duration-200"

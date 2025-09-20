@@ -5,63 +5,61 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Turma;
 use App\Models\Aluno;
+use Illuminate\Validation\Rule;
 
-class TurmasController extends Controller
-{
+class TurmasController extends Controller {
     /**
      * Exibe uma lista de turmas ativas.
      */
-    public function index()
-    {
-        $turmas = Turma::ativas()
+    public function index() {
+        $aTurmas = Turma::ativas()
                       ->with('alunos')
                       ->paginate(12);
         
-        return view('turmas.index', compact('turmas'));
+        return view('turmas.index', compact('aTurmas'));
     }
 
     /**
      * Exibe o formulário para criar uma nova turma.
      */
-    public function create()
-    {
-        return view('turmas.create');
+    public function create() {
+        $aProfessores = Aluno::ativas()
+            ->where('tipo', 'professor')
+            ->orderBy('nome')
+            ->get();
+
+        return view('turmas.cadastro', compact('aProfessores'));
     }
 
     /**
      * Armazena uma nova turma no banco de dados.
      */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'nome' => 'required|string|max:255',
-            'modalidade' => 'required|in:gi,no-gi,mma,defesa-pessoal',
-            'nivel' => 'required|in:iniciante,intermediario,avancado,misto',
-            'instrutor' => 'required|string|max:255',
-            'dias_semana' => 'required|array|min:1',
-            'dias_semana.*' => 'in:segunda,terca,quarta,quinta,sexta,sabado,domingo',
-            'horario_inicio' => 'required',
-            'horario_fim' => 'required|after:horario_inicio',
-            'capacidade_maxima' => 'required|integer|min:1|max:50',
-            'status' => 'required|in:ativa,inativa,pausada',
-            'observacoes' => 'nullable|string|max:1000',
-        ], [
-            'nome.required' => 'O nome da turma é obrigatório.',
-            'modalidade.required' => 'Selecione uma modalidade.',
-            'nivel.required' => 'Selecione o nível da turma.',
-            'instrutor.required' => 'O nome do instrutor é obrigatório.',
-            'dias_semana.required' => 'Selecione pelo menos um dia da semana.',
-            'dias_semana.min' => 'Selecione pelo menos um dia da semana.',
-            'horario_inicio.required' => 'O horário de início é obrigatório.',
-            'horario_fim.required' => 'O horário de fim é obrigatório.',
-            'horario_fim.after' => 'O horário de fim deve ser posterior ao horário de início.',
-            'capacidade_maxima.required' => 'A capacidade máxima é obrigatória.',
-            'capacidade_maxima.min' => 'A capacidade deve ser de pelo menos 1 aluno.',
-            'capacidade_maxima.max' => 'A capacidade máxima é de 50 alunos.',
-            'status.required' => 'Selecione o status da turma.',
+    public function store(Request $oRequest) {
+        $oRequest->validate([
+              'nome'         => 'required|string|max:255'
+            , 'modalidade'   => 'required|in:gi,no-gi,gracie,luta-livre,combate'
+            , 'nivel'        => 'required|in:iniciante,intermediario,avancado,misto'
+            , 'instrutor_id' => [
+                  'required'
+                , Rule::exists('alunos', 'id')->where(fn($oQuery) =>
+                    $oQuery->where('tipo', 'professor')->where('excluido', 'N')
+                )
+            ]
+            , 'dias_semana'       => 'required|array|min:1'
+            , 'dias_semana.*'     => 'in:segunda,terca,quarta,quinta,sexta,sabado,domingo'
+            , 'horario_inicio'    => 'required'
+            , 'horario_fim'       => 'required|after:horario_inicio'
+            , 'capacidade_maxima' => 'required|integer|min:1|max:50'
+            , 'status'            => 'required|in:ativa,inativa,pausada'
+            , 'observacoes'       => 'nullable|string|max:1000'
         ]);
 
-        Turma::create($request->all());
+        $aProfessor = Aluno::findOrFail($oRequest->instrutor_id);
+
+        $aDados = $oRequest->all();
+        $aDados['instrutor'] = $aProfessor->nome;
+
+        Turma::create($aDados);
 
         return redirect()->route('turmas.index')->with('success', 'Turma criada com sucesso!');
     }
@@ -69,57 +67,56 @@ class TurmasController extends Controller
     /**
      * Exibe os detalhes de uma turma específica.
      */
-    public function show(string $id)
-    {
-        $turma = Turma::ativas()->with('alunos')->findOrFail($id);
-        return view('turmas.show', compact('turma'));
+    public function show(string $iCodigo) {
+        $aTurmas = Turma::ativas()->with('alunos')->findOrFail($iCodigo);
+        return view('turmas.detalhe', compact('aTurmas'));
     }
 
     /**
      * Exibe o formulário para editar uma turma.
      */
-    public function edit(string $id)
-    {
-        $turma = Turma::ativas()->findOrFail($id);
-        return view('turmas.edit', compact('turma'));
+    public function edit(string $iCodigo) {
+        $aTurmas = Turma::ativas()->findOrFail($iCodigo);
+
+        $aProfessores = Aluno::ativas()
+            ->where('tipo', 'professor')
+            ->orderBy('nome')
+            ->get();
+
+        return view('turmas.alterar', compact('aTurmas', 'aProfessores'));
     }
 
     /**
      * Atualiza uma turma no banco de dados.
      */
-    public function update(Request $request, string $id)
-    {
-        $turma = Turma::ativas()->findOrFail($id);
+    public function update(Request $oRequest, string $iCodigo) {
+        $aTurma = Turma::ativas()->findOrFail($iCodigo);
 
-        $request->validate([
-            'nome' => 'required|string|max:255',
-            'modalidade' => 'required|in:gi,no-gi,mma,defesa-pessoal',
-            'nivel' => 'required|in:iniciante,intermediario,avancado,misto',
-            'instrutor' => 'required|string|max:255',
-            'dias_semana' => 'required|array|min:1',
-            'dias_semana.*' => 'in:segunda,terca,quarta,quinta,sexta,sabado,domingo',
-            'horario_inicio' => 'required',
-            'horario_fim' => 'required|after:horario_inicio',
-            'capacidade_maxima' => 'required|integer|min:1|max:50',
-            'status' => 'required|in:ativa,inativa,pausada',
-            'observacoes' => 'nullable|string|max:1000',
-        ], [
-            'nome.required' => 'O nome da turma é obrigatório.',
-            'modalidade.required' => 'Selecione uma modalidade.',
-            'nivel.required' => 'Selecione o nível da turma.',
-            'instrutor.required' => 'O nome do instrutor é obrigatório.',
-            'dias_semana.required' => 'Selecione pelo menos um dia da semana.',
-            'dias_semana.min' => 'Selecione pelo menos um dia da semana.',
-            'horario_inicio.required' => 'O horário de início é obrigatório.',
-            'horario_fim.required' => 'O horário de fim é obrigatório.',
-            'horario_fim.after' => 'O horário de fim deve ser posterior ao horário de início.',
-            'capacidade_maxima.required' => 'A capacidade máxima é obrigatória.',
-            'capacidade_maxima.min' => 'A capacidade deve ser de pelo menos 1 aluno.',
-            'capacidade_maxima.max' => 'A capacidade máxima é de 50 alunos.',
-            'status.required' => 'Selecione o status da turma.',
+        $oRequest->validate([
+              'nome'         => 'required|string|max:255'
+            , 'modalidade'   => 'required|in:gi,no-gi,gracie,luta-livre,combate'
+            , 'nivel'        => 'required|in:iniciante,intermediario,avancado,misto'
+            , 'instrutor_id' => [
+                  'required'
+                , Rule::exists('alunos', 'id')->where(fn($oQuery) =>
+                    $oQuery->where('tipo', 'professor')->where('excluido', 'N')
+                )
+            ]
+            , 'dias_semana'       => 'required|array|min:1'
+            , 'dias_semana.*'     => 'in:segunda,terca,quarta,quinta,sexta,sabado,domingo'
+            , 'horario_inicio'    => 'required'
+            , 'horario_fim'       => 'required|after:horario_inicio'
+            , 'capacidade_maxima' => 'required|integer|min:1|max:50'
+            , 'status'            => 'required|in:ativa,inativa,pausada'
+            , 'observacoes'       => 'nullable|string|max:1000'
         ]);
 
-        $turma->update($request->all());
+        $aProfessor = Aluno::findOrFail($oRequest->instrutor_id);
+
+        $aDados = $oRequest->all();
+        $aDados['instrutor'] = $aProfessor->nome; 
+
+        $aTurma->update($aDados);
 
         return redirect()->route('turmas.index')->with('success', 'Turma atualizada com sucesso!');
     }
@@ -127,71 +124,47 @@ class TurmasController extends Controller
     /**
      * Marca uma turma como 'excluida'
      */
-    public function destroy(string $id)
-    {
-        $turma = Turma::findOrFail($id);
-        $turma->excluido = 'S';
-        $turma->save();
+    public function destroy(string $iCodigo) {
+        $aTurmas = Turma::findOrFail($iCodigo);
+        $aTurmas->excluido = 'S';
+        $aTurmas->save();
 
-        return redirect()->route('turmas.index')->with('success', 'Turma movida para a lixeira com sucesso!');
-    }
-
-    /**
-     * Exibe uma lista de turmas na lixeira
-     */
-    public function trash()
-    {
-        $turmas = Turma::excluidas()->with('alunos')->paginate(12);
-        return view('turmas.trash', compact('turmas'));
-    }
-
-    /**
-     * Restaura uma turma da lixeira.
-     */
-    public function restore(string $id)
-    {
-        $turma = Turma::findOrFail($id);
-        $turma->excluido = 'N';
-        $turma->save();
-
-        return redirect()->route('turmas.trash')->with('success', 'Turma restaurada com sucesso!');
+        return redirect()->route('turmas.index')->with('success', 'Turma removida com sucesso!');
     }
 
     /**
      * Exibe a página de gestão de alunos de uma turma.
      */
-    public function alunos(string $id)
-    {
-        $turma = Turma::ativas()->with('alunos')->findOrFail($id);
-        $alunosDisponiveis = Aluno::ativas()
-                                  ->whereDoesntHave('turmas', function ($query) use ($id) {
-                                      $query->where('turma_alunos.turma_id', $id);
+    public function alunos(string $iCodigo) {
+        $aTurmas = Turma::ativas()->with('alunos')->findOrFail($iCodigo);
+        $aAlunosDisponiveis = Aluno::ativas()
+                                  ->whereDoesntHave('turmas', function ($rQuery) use ($iCodigo) {
+                                      $rQuery->where('turma_alunos.turma_id', $iCodigo);
                                   })
                                   ->get();
         
-        return view('turmas.alunos', compact('turma', 'alunosDisponiveis'));
+        return view('turmas.alunos', compact('aTurmas', 'aAlunosDisponiveis'));
     }
 
     /**
      * Matricula um aluno em uma turma.
      */
-    public function matricularAluno(Request $request, string $id)
-    {
-        $turma = Turma::ativas()->findOrFail($id);
+    public function matricularAluno(Request $oRequest, string $iCodigo) {
+        $aTurmas = Turma::ativas()->findOrFail($iCodigo);
         
-        $request->validate([
-            'aluno_id' => 'required|exists:alunos,id',
+        $oRequest->validate([
+            'aluno_id' => 'required|exists:alunos,id'
         ]);
 
-        if ($turma->numero_alunos >= $turma->capacidade_maxima) {
+        if ($aTurmas->numero_alunos >= $aTurmas->capacidade_maxima) {
             return redirect()->back()->with('error', 'Turma já atingiu a capacidade máxima!');
         }
 
-        if ($turma->alunos()->where('aluno_id', $request->aluno_id)->exists()) {
+        if ($aTurmas->alunos()->where('aluno_id', $oRequest->aluno_id)->exists()) {
             return redirect()->back()->with('error', 'Aluno já está matriculado nesta turma!');
         }
 
-        $turma->alunos()->attach($request->aluno_id, [
+        $aTurmas->alunos()->attach($oRequest->aluno_id, [
             'data_matricula' => now()->toDateString(),
             'status' => 'ativo'
         ]);
@@ -202,13 +175,12 @@ class TurmasController extends Controller
     /**
      * Remove um aluno de uma turma.
      */
-    public function removerAluno(string $turmaId, string $alunoId)
-    {
-        $turma = Turma::ativas()->findOrFail($turmaId);
+    public function removerAluno(string $iTurmaId, string $iAlunoId) {
+        $aTurmas = Turma::ativas()->findOrFail($iTurmaId);
         
-        $turma->alunos()->updateExistingPivot($alunoId, [
-            'data_saida' => now()->toDateString(),
-            'status' => 'inativo'
+        $aTurmas->alunos()->updateExistingPivot($iAlunoId, [
+              'data_saida' => now()->toDateString()
+            , 'status'     => 'inativo'
         ]);
 
         return redirect()->back()->with('success', 'Aluno removido da turma com sucesso!');

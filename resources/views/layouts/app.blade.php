@@ -79,6 +79,7 @@
         }
     </style>
 </head>
+@stack('scripts')
 <body class="bg-gray-100 font-sans antialiased text-gray-dark">
     <div class="min-h-screen flex flex-col">
         @include('layouts.header')

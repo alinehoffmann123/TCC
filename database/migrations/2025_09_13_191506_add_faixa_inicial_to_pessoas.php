@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('alunos', function (Blueprint $table) {
-            $table->char('excluido', 1)->default('N')->after('status');
+        Schema::table('pessoas', function (Blueprint $table) {
+            $table->foreignId('faixa_inicial_id')->nullable()
+                ->constrained('faixas')->nullOnDelete();
         });
     }
 
@@ -21,8 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('alunos', function (Blueprint $table) {
-            $table->dropColumn('excluido');
+        Schema::table('pessoas', function (Blueprint $table) {
+            //
         });
     }
 };

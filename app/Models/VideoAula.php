@@ -5,66 +5,60 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class VideoAula extends Model
-{
+class VideoAula extends Model {
     use HasFactory;
 
     protected $fillable = [
-        'titulo',
-        'descricao',
-        'youtube_id',
-        'duracao_minutos',
-        'nivel',
-        'modalidade',
-        'excluido'
+          'titulo'
+        , 'descricao'
+        , 'youtube_id'
+        , 'duracao_minutos'
+        , 'nivel'
+        , 'modalidade'
+        , 'excluido'
     ];
 
     /**
      * Scope para vídeo aulas ativas (não excluídas)
      */
-    public function scopeAtivas($query)
-    {
-        return $query->where('excluido', 'N');
+    public function scopeAtivas($rQuery) {
+        return $rQuery->where('excluido', 'N');
     }
 
     /**
      * Scope para vídeo aulas excluídas
      */
-    public function scopeExcluidas($query)
-    {
-        return $query->where('excluido', 'S');
+    public function scopeExcluidas($rQuery) {
+        return $rQuery->where('excluido', 'S');
     }
 
     /**
      * Acessor para obter a URL de thumbnail do YouTube
      */
-    public function getThumbnailUrlAttribute()
-    {
+    public function getThumbnailUrlAttribute() {
         return "https://img.youtube.com/vi/{$this->youtube_id}/hqdefault.jpg";
     }
 
     /**
      * Acessor para obter a URL de embed do YouTube
      */
-    public function getEmbedUrlAttribute()
-    {
+    public function getEmbedUrlAttribute() {
         return "https://www.youtube.com/embed/{$this->youtube_id}";
     }
 
     /**
      * Acessor para formatar a duração
      */
-    public function getDuracaoFormatadaAttribute()
-    {
+    public function getDuracaoFormatadaAttribute() {
         if (is_null($this->duracao_minutos)) {
             return 'N/A';
         }
-        $hours = floor($this->duracao_minutos / 60);
-        $minutes = $this->duracao_minutos % 60;
+        $nHoras = floor($this->duracao_minutos / 60);
+        $nMinutos = $this->duracao_minutos % 60;
         
-        if ($hours > 0) {
-            return "{$hours}h {$minutes}min";
+        if ($nHoras > 0) {
+            return "{$nHoras}h {$nMinutos}min";
         }
-        return "{$minutes}min";
+        return "{$nMinutos}min";
     }
 }

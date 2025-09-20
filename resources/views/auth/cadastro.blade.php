@@ -34,22 +34,12 @@
         .border-gray-light { border-color: #CCCCCC; }
         .text-gray-dark { color: #333333; }
         .shadow-bordo-dark\/10 { box-shadow: 0 25px 50px -12px rgba(75, 0, 30, 0.1); }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in { animation: fadeIn 0.6s ease-out; }
-        
-        input:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px #4B001E;
-        }
-        
-        input[type="checkbox"]:checked {
-            background-color: #4B001E;
-            border-color: #4B001E;
-        }
+
+        input:focus { outline: none; box-shadow: 0 0 0 2px #4B001E; }
+        input[type="checkbox"]:checked { background-color: #4B001E; border-color: #4B001E; }
     </style>
 </head>
 <body class="min-h-screen bg-white flex">
@@ -100,7 +90,7 @@
                 <div class="flex items-center space-x-3 p-2 rounded-lg hover:bg-white/5 transition-all duration-200">
                     <div class="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center shadow-sm">
                         <svg class="w-4 h-4 text-white/90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 013.138-3.138z"></path>
                         </svg>
                     </div>
                     <span class="text-white/90 drop-shadow-sm">Sistema de graduações e faixas</span>
@@ -147,11 +137,13 @@
                 <h1 class="text-2xl font-bold text-gray-dark mb-2">Sistema de Gestão</h1>
                 <p class="text-gray-dark/70">Academia de Jiu-Jitsu</p>
             </div>
+
             <div class="bg-white border border-gray-light shadow-2xl shadow-bordo-dark/10 backdrop-blur-sm rounded-lg">
                 <div class="text-center py-6 px-6 border-b border-gray-light">
                     <h2 class="text-2xl text-gray-dark font-semibold">Criar Nova Conta</h2>
                     <p class="text-gray-dark/70 mt-1">Preencha os campos para solicitar seu acesso</p>
                 </div>
+
                 <div class="p-6">
                     @if ($errors->any())
                         <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -171,18 +163,17 @@
                                 <svg class="absolute left-3 top-3 h-4 w-4 text-gray-dark/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                 </svg>
-                                <input 
-                                    id="name" 
-                                    name="name" 
-                                    type="text" 
+                                <input
+                                    id="name"
+                                    name="name"
+                                    type="text"
                                     value="{{ old('name') }}"
                                     placeholder="Seu nome completo"
                                     class="pl-10 w-full px-3 py-2 border border-gray-light rounded-md focus:outline-none focus:ring-2 focus:ring-bordo-dark focus:border-bordo-dark text-gray-dark"
-                                    required
-                                    autofocus
-                                >
+                                    required autofocus>
                             </div>
                         </div>
+
                         <div class="space-y-2">
                             <label for="email" class="text-gray-dark font-medium block">Email</label>
                             <div class="relative">
@@ -191,36 +182,32 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14c-1.657 0-3-1.343-3-3V7a3 3 0 016 0v4c0 1.657-1.343 3-3 3z"></path>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8"></path>
                                 </svg>
-                                <input 
-                                    id="email" 
-                                    name="email" 
-                                    type="email" 
+                                <input
+                                    id="email"
+                                    name="email"
+                                    type="email"
                                     value="{{ old('email') }}"
                                     placeholder="seu@email.com"
                                     class="pl-10 w-full px-3 py-2 border border-gray-light rounded-md focus:outline-none focus:ring-2 focus:ring-bordo-dark focus:border-bordo-dark text-gray-dark"
-                                    required
-                                >
+                                    required>
                             </div>
                         </div>
+
                         <div class="space-y-2">
                             <label for="password" class="text-gray-dark font-medium block">Senha</label>
                             <div class="relative">
                                 <svg class="absolute left-3 top-3 h-4 w-4 text-gray-dark/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                                 </svg>
-                                <input 
-                                    id="password" 
-                                    name="password" 
-                                    type="password" 
+                                <input
+                                    id="password"
+                                    name="password"
+                                    type="password"
                                     placeholder="Crie sua senha"
                                     class="pl-10 pr-10 w-full px-3 py-2 border border-gray-light rounded-md focus:outline-none focus:ring-2 focus:ring-bordo-dark focus:border-bordo-dark text-gray-dark"
-                                    required
-                                >
-                                <button 
-                                    type="button" 
-                                    onclick="jVisualizarDadosSenhas('password')"
-                                    class="absolute right-3 top-3 text-gray-dark/50 hover:text-bordo-dark transition-colors"
-                                >
+                                    required>
+                                <button type="button" onclick="jVisualizarDadosSenhas('password')"
+                                        class="absolute right-3 top-3 text-gray-dark/50 hover:text-bordo-dark transition-colors">
                                     <svg id="eye-open-password" class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
@@ -235,21 +222,17 @@
                             <label for="password_confirmation" class="text-gray-dark font-medium block">Confirmar Senha</label>
                             <div class="relative">
                                 <svg class="absolute left-3 top-3 h-4 w-4 text-gray-dark/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                                 </svg>
-                                <input 
-                                    id="password_confirmation" 
-                                    name="password_confirmation" 
-                                    type="password" 
+                                <input
+                                    id="password_confirmation"
+                                    name="password_confirmation"
+                                    type="password"
                                     placeholder="Confirme sua senha"
                                     class="pl-10 pr-10 w-full px-3 py-2 border border-gray-light rounded-md focus:outline-none focus:ring-2 focus:ring-bordo-dark focus:border-bordo-dark text-gray-dark"
-                                    required
-                                >
-                                <button 
-                                    type="button" 
-                                    onclick="jVisualizarDadosSenhas('password_confirmation')"
-                                    class="absolute right-3 top-3 text-gray-dark/50 hover:text-bordo-dark transition-colors"
-                                >
+                                    required>
+                                <button type="button" onclick="jVisualizarDadosSenhas('password_confirmation')"
+                                        class="absolute right-3 top-3 text-gray-dark/50 hover:text-bordo-dark transition-colors">
                                     <svg id="eye-open-password_confirmation" class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
@@ -261,7 +244,42 @@
                             </div>
                         </div>
 
-                        <button 
+                        <div class="space-y-2">
+                            <label class="text-gray-dark font-medium block">Tipo de acesso</label>
+
+                            <div class="flex items-center gap-6">
+                                <label class="inline-flex items-center gap-2">
+                                    <input type="radio" name="role" value="aluno"
+                                        class="rounded border-gray-light text-bordo-dark focus:ring-bordo-dark"
+                                        {{ old('role','aluno') === 'aluno' ? 'checked' : '' }}>
+                                    <span class="text-gray-dark">Aluno</span>
+                                </label>
+
+                                <label class="inline-flex items-center gap-2">
+                                    <input type="radio" name="role" value="professor" id="rb-prof"
+                                        class="rounded border-gray-light text-bordo-dark focus:ring-bordo-dark"
+                                        {{ old('role') === 'professor' ? 'checked' : '' }}>
+                                    <span class="text-gray-dark">Professor</span>
+                                </label>
+                            </div>
+
+                            <div id="invite-wrap" class="{{ old('role')==='professor' ? '' : 'hidden' }} mt-2">
+                                <label for="invite_code" class="text-gray-dark font-medium block">
+                                    Código de convite (somente professores)
+                                </label>
+                                <input id="invite_code" name="invite_code" type="text" value="{{ old('invite_code') }}"
+                                    placeholder="Informe o código fornecido pela academia"
+                                    class="w-full px-3 py-2 border border-gray-light rounded-md focus:outline-none focus:ring-2 focus:ring-bordo-dark focus:border-bordo-dark text-gray-dark">
+                                @error('invite_code')
+                                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                                <p class="text-xs text-gray-dark/70 mt-1">
+                                    Caso não possua um código, cadastre-se como <strong>Aluno</strong>.
+                                </p>
+                            </div>
+                        </div>
+
+                        <button
                             type="submit"
                             class="w-full bg-bordo-dark hover:bg-bordo-hover text-white font-semibold py-3 px-4 rounded-md transition-colors duration-200"
                         >
@@ -282,10 +300,23 @@
                     </form>
                 </div>
             </div>
+
             <div class="text-center mt-8 text-gray-dark/50 text-sm">
                 <p>© {{ date('Y') }} FightGym System. Todos os direitos reservados.</p>
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const inviteWrap = document.getElementById('invite-wrap');
+            const updateInviteVisibility = () => {
+                const v = document.querySelector('input[name="role"]:checked')?.value;
+                inviteWrap?.classList.toggle('hidden', v !== 'professor');
+            };
+            document.querySelectorAll('input[name="role"]').forEach(r => r.addEventListener('change', updateInviteVisibility));
+            updateInviteVisibility();
+        });
+    </script>
 </body>
 </html>

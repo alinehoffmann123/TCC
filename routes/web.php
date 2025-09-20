@@ -1,61 +1,110 @@
 <?php
 
-use App\Http\Controllers\AlunosController;
-use App\Http\Controllers\TurmasController;
-use App\Http\Controllers\VideoAulasController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\CadastroController;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AlunosController;
+use App\Http\Controllers\EvolucaoAlunoController;
+use App\Http\Controllers\TurmasController;
+use App\Http\Controllers\VideoAulasController;
+use App\Http\Controllers\FaixaController;
+use App\Http\Controllers\GraduacaoController;
 
-Route::get('/', function () {
-    return redirect()->route('login');
+Route::middleware('auth')->group(function () {
+    // ...............
+
+    // ALUNOS
+    // --- CRUD protegido (admin/professor) ---
+    Route::middleware('role:admin,professor')->group(function () {
+        Route::get('/alunos/create',       [AlunosController::class, 'create'])->name('alunos.create');
+        Route::post('/alunos',             [AlunosController::class, 'store'])->name('alunos.store');
+        Route::get('/alunos/{aluno}/edit', [AlunosController::class, 'edit'])->name('alunos.edit')->whereNumber('aluno');
+        Route::put('/alunos/{aluno}',      [AlunosController::class, 'update'])->name('alunos.update')->whereNumber('aluno');
+        Route::delete('/alunos/{aluno}',   [AlunosController::class, 'destroy'])->name('alunos.destroy')->whereNumber('aluno');
+    });
+
+    Route::post('/logout', [LoginController::class, 'logout'])
+        ->middleware('auth')
+        ->name('logout');
+
+    Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard');
+    });
+
+
+    // --- Leitura para todos (admin/professor/aluno) ---
+    Route::get('/alunos',                [AlunosController::class, 'index'])
+        ->name('alunos.index')->middleware('role:admin,professor,aluno');
+    Route::get('/alunos/{aluno}',        [AlunosController::class, 'show'])
+        ->name('alunos.show')->middleware('role:admin,professor,aluno')->whereNumber('aluno');
+
+    // EVOLUÇÃO
+    Route::get('/alunos/{aluno}/evolucao', [EvolucaoAlunoController::class, 'show'])
+        ->name('alunos.evolucao')->middleware('role:admin,professor,aluno')->whereNumber('aluno');
+    Route::post('/alunos/{aluno}/evolucao/grau', [EvolucaoAlunoController::class, 'storeGrau'])
+        ->name('alunos.evolucao.grau.store')->middleware('role:admin,professor')->whereNumber('aluno');
+    Route::post('/alunos/{aluno}/evolucao/promover', [EvolucaoAlunoController::class, 'promover'])
+        ->name('alunos.evolucao.promover')->middleware('role:admin,professor')->whereNumber('aluno');
+
+    // TURMAS
+    // --- CRUD protegido (admin/professor) ---
+    Route::middleware('role:admin,professor')->group(function () {
+        Route::get('/turmas/create',       [TurmasController::class, 'create'])->name('turmas.create');
+        Route::post('/turmas',             [TurmasController::class, 'store'])->name('turmas.store');
+        Route::get('/turmas/{turma}/edit', [TurmasController::class, 'edit'])->name('turmas.edit')->whereNumber('turma');
+        Route::put('/turmas/{turma}',      [TurmasController::class, 'update'])->name('turmas.update')->whereNumber('turma');
+        Route::delete('/turmas/{turma}',   [TurmasController::class, 'destroy'])->name('turmas.destroy')->whereNumber('turma');
+
+        Route::post('/turmas/{turma}/restaurar',       [TurmasController::class, 'restore'])->name('turmas.restore')->whereNumber('turma');
+        Route::get('/turmas/{turma}/alunos',           [TurmasController::class, 'alunos'])->name('turmas.alunos')->whereNumber('turma');
+        Route::post('/turmas/{turma}/matricular',      [TurmasController::class, 'matricularAluno'])->name('turmas.matricular')->whereNumber('turma');
+        Route::delete('/turmas/{turma}/alunos/{aluno}',[TurmasController::class, 'removerAluno'])->name('turmas.remover-aluno')->whereNumber('turma')->whereNumber('aluno');
+    });
+
+    // --- Leitura para todos ---
+    Route::get('/turmas',          [TurmasController::class, 'index'])
+        ->name('turmas.index')->middleware('role:admin,professor,aluno');
+    Route::get('/turmas/{turma}',  [TurmasController::class, 'show'])
+        ->name('turmas.show')->middleware('role:admin,professor,aluno')->whereNumber('turma');
+
+    // VÍDEO-AULAS (mesma ideia)
+    Route::middleware('role:admin,professor')->group(function () {
+        Route::get('/video-aulas/create',           [VideoAulasController::class, 'create'])->name('video-aulas.create');
+        Route::post('/video-aulas',                 [VideoAulasController::class, 'store'])->name('video-aulas.store');
+        Route::get('/video-aulas/{video_aula}/edit',[VideoAulasController::class, 'edit'])->name('video-aulas.edit')->whereNumber('video_aula');
+        Route::put('/video-aulas/{video_aula}',     [VideoAulasController::class, 'update'])->name('video-aulas.update')->whereNumber('video_aula');
+        Route::delete('/video-aulas/{video_aula}',  [VideoAulasController::class, 'destroy'])->name('video-aulas.destroy')->whereNumber('video_aula');
+    });
+
+    Route::get('/video-aulas',               [VideoAulasController::class, 'index'])
+        ->name('video-aulas.index')->middleware('role:admin,professor,aluno');
+    Route::get('/video-aulas/{video_aula}',  [VideoAulasController::class, 'show'])
+        ->name('video-aulas.show')->middleware('role:admin,professor,aluno')->whereNumber('video_aula');
+
+   /*
+    |----------------------------------------------------------------------
+    | Faixas - somente professor/admin
+    |----------------------------------------------------------------------
+    */
+    Route::middleware('role:admin,professor')->group(function () {
+        Route::get('/faixas',              [FaixaController::class, 'index'])->name('faixas.index');
+        Route::get('/faixas/create',       [FaixaController::class, 'create'])->name('faixas.create');
+        Route::post('/faixas',             [FaixaController::class, 'store'])->name('faixas.store');
+        Route::get('/faixas/{faixa}/edit', [FaixaController::class, 'edit'])->name('faixas.edit');
+        Route::put('/faixas/{faixa}',      [FaixaController::class, 'update'])->name('faixas.update');
+        Route::delete('/faixas/{faixa}',   [FaixaController::class, 'destroy'])->name('faixas.destroy');
+    });
+
+    /*
+    |----------------------------------------------------------------------
+    | Graduações (por aluno) - somente professor/admin
+    |----------------------------------------------------------------------
+    */
+    Route::prefix('alunos/{aluno}')->middleware('role:admin,professor')->group(function () {
+        Route::get('graduacoes',        [GraduacaoController::class, 'index'])->name('graduacoes.index');
+        Route::get('graduacoes/create', [GraduacaoController::class, 'create'])->name('graduacoes.create');
+        Route::post('graduacoes',       [GraduacaoController::class, 'store'])->name('graduacoes.store');
+    });
 });
-
-Route::middleware('guest')->group(function () {
-
-    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [LoginController::class, 'login']);
-
-
-    Route::get('/cadastro', [CadastroController::class, 'showRegistrationForm'])->name('cadastro');
-    Route::post('/cadastro', [CadastroController::class, 'cadastro']);
-
-    Route::get('/password/reset', function () {
-        return view('auth.passwords.email');
-    })->name('password.request');
-    
-    Route::post('/password/email', function () {
-        return back()->with('status', 'Funcionalidade em desenvolvimento.');
-    })->name('password.email');
-});
-
-
-Route::middleware(['auth'])->group(function () {
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-
-
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-
-
-    Route::resource('alunos', AlunosController::class);
-    Route::get('/alunos/lixeira', [AlunosController::class, 'trash'])->name('alunos.trash');
-    Route::post('/alunos/{aluno}/restaurar', [AlunosController::class, 'restore'])->name('alunos.restore');
-
-
-    Route::resource('turmas', TurmasController::class);
-    Route::get('/turmas/lixeira', [TurmasController::class, 'trash'])->name('turmas.trash');
-    Route::post('/turmas/{turma}/restaurar', [TurmasController::class, 'restore'])->name('turmas.restore');
-    
-    Route::get('/turmas/{turma}/alunos', [TurmasController::class, 'alunos'])->name('turmas.alunos');
-    Route::post('/turmas/{turma}/matricular', [TurmasController::class, 'matricularAluno'])->name('turmas.matricular');
-    Route::delete('/turmas/{turma}/alunos/{aluno}', [TurmasController::class, 'removerAluno'])->name('turmas.remover-aluno');
-
-    Route::resource('video-aulas', VideoAulasController::class);
-    Route::get('/video-aulas/lixeira', [VideoAulasController::class, 'trash'])->name('video-aulas.trash');
-    Route::post('/video-aulas/{videoAula}/restaurar', [VideoAulasController::class, 'restore'])->name('video-aulas.restore');
-});
-
-

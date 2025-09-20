@@ -5,62 +5,54 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
-class LoginController extends Controller
-{
-    /**
-     * Mostrar o formulário de login
-     */
-    public function showLoginForm()
-    {
+class LoginController extends Controller {
+    public function showLoginForm() {
         return view('auth.login');
     }
 
-    /**
-     * Processar o login
-     */
-    public function login(Request $request)
-    {
-        // Validar os dados do formulário
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|min:6',
+    public function login(Request $oRequest) {
+        $oValidador = Validator::make($oRequest->all(), [
+              'email'    => ['required', 'email']
+            , 'password' => ['required']
         ], [
-            'email.required' => 'O campo email é obrigatório.',
-            'email.email' => 'Por favor, insira um email válido.',
-            'password.required' => 'O campo senha é obrigatório.',
-            'password.min' => 'A senha deve ter pelo menos 6 caracteres.',
+              'email.required'    => 'O email é obrigatório.'
+            , 'email.email'       => 'Digite um email válido.'
+            , 'password.required' => 'A senha é obrigatória.'
         ]);
 
-        // Tentar fazer login
-        $credentials = $request->only('email', 'password');
-        $remember = $request->has('remember');
-
-        if (Auth::attempt($credentials, $remember)) {
-            // Login bem-sucedido
-            $request->session()->regenerate();
-            
-            return redirect()->intended('/dashboard')->with('success', 'Login realizado com sucesso!');
+        if ($oValidador->fails()) {
+            return back()->withErrors($oValidador)->withInput();
         }
 
-        // Login falhou
-        return back()->withErrors([
-            'email' => 'As credenciais fornecidas não conferem com nossos registros.',
-        ])->withInput($request->except('password'));
+        $bRelembrar = $oRequest->get('remember', false);
+        $oUsuario = User::where('email', $oRequest->input('email'))->first();
+
+        if (!$oUsuario) {
+            return back()
+                ->withErrors(['email' => 'Usuário não cadastrado. Crie uma conta para continuar.'])
+                ->withInput($oRequest->only('email'));
+        }
+
+        if (!Hash::check($oRequest->input('password'), $oUsuario->password)) {
+            return back()
+                ->withErrors(['password' => 'Senha incorreta.'])
+                ->withInput($oRequest->only('email'));
+        }
+
+        Auth::login($oUsuario, $bRelembrar);
+        $oRequest->session()->regenerate();
+
+        return redirect()->intended(route('dashboard'));
     }
 
-    /**
-     * Fazer logout
-     */
-    public function logout(Request $request)
-    {
+    public function logout(Request $oRequest) {
         Auth::logout();
-        
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        
-        return redirect('/login')->with('success', 'Logout realizado com sucesso!');
+        $oRequest->session()->invalidate();
+        $oRequest->session()->regenerateToken();
+        return redirect()->route('login');
     }
 }

@@ -18,6 +18,8 @@ return [
         'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
     ],
 
+    'professor_invite_code' => env('PROFESSOR_INVITE_CODE', null),
+
     /*
     |--------------------------------------------------------------------------
     | Authentication Guards
