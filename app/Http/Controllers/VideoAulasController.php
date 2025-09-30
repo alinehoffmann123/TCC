@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\VideoAula;
-use Illuminate\Validation\Rule;
 
 class VideoAulasController extends Controller {
 
@@ -72,16 +71,16 @@ class VideoAulasController extends Controller {
         ]);
 
         preg_match('/^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=|embed\/|v\/|)([\w-]{11})(?:\S+)?$/', $oRequest->url_youtube, $matches);
-        $youtubeId = $matches[1] ?? null;
+        $iCodigoVideo = $matches[1] ?? null;
 
-        if (!$youtubeId) {
+        if (!$iCodigoVideo) {
             return redirect()->back()->withInput()->withErrors(['url_youtube' => 'Não foi possível extrair o ID do vídeo do YouTube da URL fornecida.']);
         }
 
         VideoAula::create([
               'titulo'          => $oRequest->titulo
             , 'descricao'       => $oRequest->descricao
-            , 'youtube_id'      => $youtubeId
+            , 'youtube_id'      => $iCodigoVideo
             , 'duracao_minutos' => $oRequest->duracao_minutos
             , 'nivel'           => $oRequest->nivel
             , 'modalidade'      => $oRequest->modalidade
@@ -94,23 +93,23 @@ class VideoAulasController extends Controller {
      * Exibe os detalhes de uma vídeo aula específica.
      */
     public function show(string $iCodigo) {
-        $videoAula = VideoAula::ativas()->findOrFail($iCodigo);
-        return view('video_aulas.detalhe', compact('videoAula'));
+        $oVideoAulas = VideoAula::ativas()->findOrFail($iCodigo);
+        return view('video_aulas.detalhe', compact('oVideoAulas'));
     }
 
     /**
      * Exibe o formulário para editar uma vídeo aula.
      */
     public function edit(string $iCodigo) {
-        $videoAula = VideoAula::ativas()->findOrFail($iCodigo);
-        return view('video_aulas.alterar', compact('videoAula'));
+        $oVideoAula = VideoAula::ativas()->findOrFail($iCodigo);
+        return view('video_aulas.alterar', compact('oVideoAula'));
     }
 
     /**
      * Atualiza uma vídeo aula no banco de dados.
      */
     public function update(Request $oRequest, string $iCodigo) {
-        $videoAula = VideoAula::ativas()->findOrFail($iCodigo);
+        $oVideoAula = VideoAula::ativas()->findOrFail($iCodigo);
 
         $oRequest->validate([
               'titulo'      => 'required|string|max:255'
@@ -139,16 +138,16 @@ class VideoAulasController extends Controller {
         ]);
 
         preg_match('/^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=|embed\/|v\/|)([\w-]{11})(?:\S+)?$/', $oRequest->url_youtube, $matches);
-        $youtubeId = $matches[1] ?? null;
+        $iCodigoVideo = $matches[1] ?? null;
 
-        if (!$youtubeId) {
+        if (!$iCodigoVideo) {
             return redirect()->back()->withInput()->withErrors(['url_youtube' => 'Não foi possível extrair o ID do vídeo do YouTube da URL fornecida.']);
         }
 
-        $videoAula->update([
+        $oVideoAula->update([
               'titulo'          => $oRequest->titulo
             , 'descricao'       => $oRequest->descricao
-            , 'youtube_id'      => $youtubeId
+            , 'youtube_id'      => $iCodigoVideo
             , 'duracao_minutos' => $oRequest->duracao_minutos
             , 'nivel'           => $oRequest->nivel
             , 'modalidade'      => $oRequest->modalidade
@@ -161,9 +160,9 @@ class VideoAulasController extends Controller {
      * Marca uma vídeo aula como 'excluida'.
      */
     public function destroy(string $id) {
-        $videoAula = VideoAula::findOrFail($id);
-        $videoAula->excluido = 'S';
-        $videoAula->save();
+        $oVideoAula = VideoAula::findOrFail($id);
+        $oVideoAula->excluido = 'S';
+        $oVideoAula->save();
 
         return redirect()->route('video-aulas.index')->with('success', 'Vídeo aula removida com sucesso!');
     }

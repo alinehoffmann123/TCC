@@ -10,10 +10,18 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
 class LoginController extends Controller {
+
+    /**
+     * Exibe o formulário de login para o usuário.
+     */
     public function showLoginForm() {
         return view('auth.login');
     }
 
+    /**
+     * Realiza o login do usuário.
+     * Valida os dados, verifica se o usuário existe, confere a senha e autentica.
+     */
     public function login(Request $oRequest) {
         $oValidador = Validator::make($oRequest->all(), [
               'email'    => ['required', 'email']
@@ -49,6 +57,10 @@ class LoginController extends Controller {
         return redirect()->intended(route('dashboard'));
     }
 
+    /**
+     * Realiza o logout do usuário.
+     * Encerra a sessão e invalida o token CSRF.
+     */
     public function logout(Request $oRequest) {
         Auth::logout();
         $oRequest->session()->invalidate();

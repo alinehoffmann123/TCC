@@ -6,14 +6,25 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 use App\Models\Aluno;
 use App\Policies\AlunoPolicy;
 
-class AuthServiceProvider extends ServiceProvider
-{
+class AuthServiceProvider extends ServiceProvider {
+    /**
+     * Mapeia os models para suas respectivas policies.
+     * 
+     * Aqui estamos dizendo ao Laravel que para o model Aluno,
+     * será usada a policy AlunoPolicy.
+     */
     protected $policies = [
         Aluno::class => AlunoPolicy::class,
     ];
 
-    public function boot(): void
-    {
+    /**
+     * Registra as policies da aplicação.
+     * 
+     * O método boot é chamado durante o carregamento do provedor de serviço.
+     * A função registerPolicies conecta as policies mapeadas acima com o sistema
+     * de autorização do Laravel (Gates, @can, etc).
+     */
+    public function boot(): void {
         $this->registerPolicies();
     }
 }

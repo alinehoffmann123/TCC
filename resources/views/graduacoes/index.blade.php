@@ -18,18 +18,18 @@
 @endif
 
 <div class="bg-white rounded-xl shadow-lg border border-gray-light p-6">
-  @forelse($graduacoes as $g)
+  @forelse($aGraduacoes as $aGraducao)
     <div class="flex items-start py-3 border-b last:border-0">
-      <div class="w-40 text-gray-600">{{ \Carbon\Carbon::parse($g->data_graduacao)->format('d/m/Y') }}</div>
+      <div class="w-40 text-gray-600">{{ \Carbon\Carbon::parse($aGraducao->data_graduacao)->format('d/m/Y') }}</div>
       <div class="flex-1">
         <div class="font-semibold text-gray-900">
-          {{ optional($g->faixaAnterior)->nome ?? '—' }} → {{ optional($g->faixaNova)->nome }}
+          {{ optional($aGraducao->faixaAnterior)->nome ?? '—' }} → {{ optional($aGraducao->faixaNova)->nome }}
         </div>
         <div class="text-sm text-gray-600">
-          Instrutor: {{ $g->instrutor_nome ?? '—' }}
+          Instrutor: {{ $aGraducao->instrutor_nome ?? '—' }}
         </div>
-        @if($g->observacoes)
-          <div class="text-sm text-gray-700 mt-1">{{ $g->observacoes }}</div>
+        @if($aGraducao->observacoes)
+          <div class="text-sm text-gray-700 mt-1">{{ $aGraducao->observacoes }}</div>
         @endif
       </div>
     </div>

@@ -11,11 +11,37 @@ use App\Http\Controllers\VideoAulasController;
 use App\Http\Controllers\FaixaController;
 use App\Http\Controllers\GraduacaoController;
 
-Route::middleware('auth')->group(function () {
-    // ...............
+/*
+|--------------------------------------------------------------------------
+| Rotas públicas (guest)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('guest')->group(function () {
+    Route::get('/', fn () => redirect()->route('login'));
 
-    // ALUNOS
-    // --- CRUD protegido (admin/professor) ---
+    Route::get('/login',   [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login',  [LoginController::class, 'login']);
+
+    Route::get('/cadastro',  [CadastroController::class, 'showCadastroForm'])->name('cadastro');
+    Route::post('/cadastro', [CadastroController::class, 'cadastro']);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Rotas autenticadas (auth)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', fn () => redirect()->route('dashboard'))->name('home');
+
+    Route::get('/alunos', [AlunosController::class, 'index'])
+        ->name('alunos.index')->middleware('role:admin,professor,aluno');
+    Route::get('/alunos/{aluno}', [AlunosController::class, 'show'])
+        ->name('alunos.show')->middleware('role:admin,professor,aluno')->whereNumber('aluno');
+
     Route::middleware('role:admin,professor')->group(function () {
         Route::get('/alunos/create',       [AlunosController::class, 'create'])->name('alunos.create');
         Route::post('/alunos',             [AlunosController::class, 'store'])->name('alunos.store');
@@ -24,23 +50,6 @@ Route::middleware('auth')->group(function () {
         Route::delete('/alunos/{aluno}',   [AlunosController::class, 'destroy'])->name('alunos.destroy')->whereNumber('aluno');
     });
 
-    Route::post('/logout', [LoginController::class, 'logout'])
-        ->middleware('auth')
-        ->name('logout');
-
-    Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])
-        ->name('dashboard');
-    });
-
-
-    // --- Leitura para todos (admin/professor/aluno) ---
-    Route::get('/alunos',                [AlunosController::class, 'index'])
-        ->name('alunos.index')->middleware('role:admin,professor,aluno');
-    Route::get('/alunos/{aluno}',        [AlunosController::class, 'show'])
-        ->name('alunos.show')->middleware('role:admin,professor,aluno')->whereNumber('aluno');
-
-    // EVOLUÇÃO
     Route::get('/alunos/{aluno}/evolucao', [EvolucaoAlunoController::class, 'show'])
         ->name('alunos.evolucao')->middleware('role:admin,professor,aluno')->whereNumber('aluno');
     Route::post('/alunos/{aluno}/evolucao/grau', [EvolucaoAlunoController::class, 'storeGrau'])
@@ -48,8 +57,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/alunos/{aluno}/evolucao/promover', [EvolucaoAlunoController::class, 'promover'])
         ->name('alunos.evolucao.promover')->middleware('role:admin,professor')->whereNumber('aluno');
 
-    // TURMAS
-    // --- CRUD protegido (admin/professor) ---
+    Route::get('/turmas', [TurmasController::class, 'index'])
+        ->name('turmas.index')->middleware('role:admin,professor,aluno');
+    Route::get('/turmas/{turma}', [TurmasController::class, 'show'])
+        ->name('turmas.show')->middleware('role:admin,professor,aluno')->whereNumber('turma');
+
     Route::middleware('role:admin,professor')->group(function () {
         Route::get('/turmas/create',       [TurmasController::class, 'create'])->name('turmas.create');
         Route::post('/turmas',             [TurmasController::class, 'store'])->name('turmas.store');
@@ -63,46 +75,29 @@ Route::middleware('auth')->group(function () {
         Route::delete('/turmas/{turma}/alunos/{aluno}',[TurmasController::class, 'removerAluno'])->name('turmas.remover-aluno')->whereNumber('turma')->whereNumber('aluno');
     });
 
-    // --- Leitura para todos ---
-    Route::get('/turmas',          [TurmasController::class, 'index'])
-        ->name('turmas.index')->middleware('role:admin,professor,aluno');
-    Route::get('/turmas/{turma}',  [TurmasController::class, 'show'])
-        ->name('turmas.show')->middleware('role:admin,professor,aluno')->whereNumber('turma');
-
-    // VÍDEO-AULAS (mesma ideia)
-    Route::middleware('role:admin,professor')->group(function () {
-        Route::get('/video-aulas/create',           [VideoAulasController::class, 'create'])->name('video-aulas.create');
-        Route::post('/video-aulas',                 [VideoAulasController::class, 'store'])->name('video-aulas.store');
-        Route::get('/video-aulas/{video_aula}/edit',[VideoAulasController::class, 'edit'])->name('video-aulas.edit')->whereNumber('video_aula');
-        Route::put('/video-aulas/{video_aula}',     [VideoAulasController::class, 'update'])->name('video-aulas.update')->whereNumber('video_aula');
-        Route::delete('/video-aulas/{video_aula}',  [VideoAulasController::class, 'destroy'])->name('video-aulas.destroy')->whereNumber('video_aula');
-    });
-
-    Route::get('/video-aulas',               [VideoAulasController::class, 'index'])
+    Route::get('/video-aulas', [VideoAulasController::class, 'index'])
         ->name('video-aulas.index')->middleware('role:admin,professor,aluno');
-    Route::get('/video-aulas/{video_aula}',  [VideoAulasController::class, 'show'])
+    Route::get('/video-aulas/{video_aula}', [VideoAulasController::class, 'show'])
         ->name('video-aulas.show')->middleware('role:admin,professor,aluno')->whereNumber('video_aula');
 
-   /*
-    |----------------------------------------------------------------------
-    | Faixas - somente professor/admin
-    |----------------------------------------------------------------------
-    */
+    Route::middleware('role:admin,professor')->group(function () {
+        Route::get('/video-aulas/create',            [VideoAulasController::class, 'create'])->name('video-aulas.create');
+        Route::post('/video-aulas',                  [VideoAulasController::class, 'store'])->name('video-aulas.store');
+        Route::get('/video-aulas/{video_aula}/edit', [VideoAulasController::class, 'edit'])->name('video-aulas.edit')->whereNumber('video_aula');
+        Route::put('/video-aulas/{video_aula}',      [VideoAulasController::class, 'update'])->name('video-aulas.update')->whereNumber('video_aula');
+        Route::delete('/video-aulas/{video_aula}',   [VideoAulasController::class, 'destroy'])->name('video-aulas.destroy')->whereNumber('video_aula');
+    });
+
     Route::middleware('role:admin,professor')->group(function () {
         Route::get('/faixas',              [FaixaController::class, 'index'])->name('faixas.index');
         Route::get('/faixas/create',       [FaixaController::class, 'create'])->name('faixas.create');
         Route::post('/faixas',             [FaixaController::class, 'store'])->name('faixas.store');
-        Route::get('/faixas/{faixa}/edit', [FaixaController::class, 'edit'])->name('faixas.edit');
-        Route::put('/faixas/{faixa}',      [FaixaController::class, 'update'])->name('faixas.update');
-        Route::delete('/faixas/{faixa}',   [FaixaController::class, 'destroy'])->name('faixas.destroy');
+        Route::get('/faixas/{faixa}/edit', [FaixaController::class, 'edit'])->name('faixas.edit')->whereNumber('faixa');
+        Route::put('/faixas/{faixa}',      [FaixaController::class, 'update'])->name('faixas.update')->whereNumber('faixa');
+        Route::delete('/faixas/{faixa}',   [FaixaController::class, 'destroy'])->name('faixas.destroy')->whereNumber('faixa');
     });
 
-    /*
-    |----------------------------------------------------------------------
-    | Graduações (por aluno) - somente professor/admin
-    |----------------------------------------------------------------------
-    */
-    Route::prefix('alunos/{aluno}')->middleware('role:admin,professor')->group(function () {
+    Route::prefix('alunos/{aluno}')->whereNumber('aluno')->middleware('role:admin,professor')->group(function () {
         Route::get('graduacoes',        [GraduacaoController::class, 'index'])->name('graduacoes.index');
         Route::get('graduacoes/create', [GraduacaoController::class, 'create'])->name('graduacoes.create');
         Route::post('graduacoes',       [GraduacaoController::class, 'store'])->name('graduacoes.store');

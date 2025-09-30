@@ -146,7 +146,6 @@
             @endif
         </div>
 
-        <!-- Botão de Edição -->
         @php($role = auth()->user()?->role)
         @if(in_array($role, ['admin','professor']))
             <div class="mt-6 border-t pt-6 text-right">

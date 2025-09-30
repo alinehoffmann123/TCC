@@ -6,14 +6,12 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class EnsureUserRole
-{
+class EnsureUserRole {
     /**
      * Usa assim: ->middleware('role:professor')
-     * Se nenhum papel for passado, permite todos os papéis autenticados.
+     * Se nenhum papel for passado, permite todos os acessos autenticados.
      */
-    public function handle(Request $request, Closure $next, ...$roles): Response
-    {
+    public function handle(Request $request, Closure $next, ...$roles): Response {
         $user = $request->user();
 
         if (!$user) {

@@ -61,17 +61,17 @@
   </form>
 
   <script>
-    document.querySelector('form').addEventListener('submit', function(e){
-      const wrap = document.getElementById('criterios-hidden');
-      wrap.innerHTML = '';
-      const criterios = Alpine.$data(document.querySelector('form')).criterios || [];
-      criterios.forEach((c,i)=>{
-        ['chave','operador','valor','peso'].forEach(k=>{
-          const input = document.createElement('input');
-          input.type='hidden';
-          input.name=`criterios[${i}][${k}]`;
-          input.value=c[k] ?? '';
-          wrap.appendChild(input);
+    document.querySelector('form').addEventListener('submit', function(){
+      const oWrap = document.getElementById('criterios-hidden');
+      oWrap.innerHTML = '';
+      const oCriterios = Alpine.$data(document.querySelector('form')).oCriterios || [];
+      oCriterios.forEach((aElemento1,iIndex)=>{
+        ['chave','operador','valor','peso'].forEach(aDado =>{
+          const oInput = document.createElement('input');
+          oInput.type  = 'hidden';
+          oInput.name  = `criterios[${iIndex}][${aDado}]`;
+          oInput.value = aElemento1[aDado] ?? '';
+          oWrap.appendChild(oInput);
         });
       });
     });

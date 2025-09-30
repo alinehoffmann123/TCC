@@ -307,20 +307,20 @@
 <script>
 // Validação em tempo real dos horários
 document.getElementById('horario_inicio').addEventListener('change', function() {
-    const inicio = this.value;
-    const fimInput = document.getElementById('horario_fim');
+    const sInicio = this.value;
+    const sFimInput = document.getElementById('horario_fim');
     
-    if (inicio && fimInput.value && inicio >= fimInput.value) {
+    if (sInicio && sFimInput.value && sInicio >= sFimInput.value) {
         alert('O horário de início deve ser anterior ao horário de fim.');
         this.focus();
     }
 });
 
 document.getElementById('horario_fim').addEventListener('change', function() {
-    const fim = this.value;
-    const inicioInput = document.getElementById('horario_inicio');
+    const sFim = this.value;
+    const sInicioInput = document.getElementById('horario_inicio');
     
-    if (inicioInput.value && fim && inicioInput.value >= fim) {
+    if (sInicioInput.value && sFim && sInicioInput.value >= sFim) {
         alert('O horário de fim deve ser posterior ao horário de início.');
         this.focus();
     }
@@ -328,14 +328,14 @@ document.getElementById('horario_fim').addEventListener('change', function() {
 
 // Validação dos dias da semana
 document.addEventListener('DOMContentLoaded', function() {
-    const checkboxes = document.querySelectorAll('input[name="dias_semana[]"]');
+    const oCheckbox = document.querySelectorAll('input[name="dias_semana[]"]');
     
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            const checkedBoxes = document.querySelectorAll('input[name="dias_semana[]"]:checked');
-            if (checkedBoxes.length === 0) {
+    oCheckbox.forEach(aCheckbox => {
+        aCheckbox.addEventListener('change', function() {
+            const oCheckboxes = document.querySelectorAll('input[name="dias_semana[]"]:checked');
+            if (oCheckboxes.length === 0) {
                 alert('Selecione pelo menos um dia da semana.');
-                this.checked = true; // Reverte a seleção se for a última desmarcada
+                this.checked = true;
             }
         });
     });

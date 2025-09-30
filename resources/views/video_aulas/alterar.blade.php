@@ -6,7 +6,7 @@
 <div class="animate-fade-in">
     <div class="flex justify-between items-center mb-6">
         <div>
-            <h2 class="text-3xl font-bold text-gray-dark">Editar Vídeo Aula: <span class="text-bordo-dark">{{ $videoAula->titulo }}</span></h2>
+            <h2 class="text-3xl font-bold text-gray-dark">Editar Vídeo Aula: <span class="text-bordo-dark">{{ $oVideoAula->titulo }}</span></h2>
             <p class="text-gray-dark/70 mt-1">Atualize as informações da vídeo aula.</p>
         </div>
         <a href="{{ route('video-aulas.index') }}" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-md shadow-md transition-colors duration-200 flex items-center space-x-2">
@@ -35,7 +35,7 @@
     @endif
 
     <div class="bg-white rounded-xl shadow-lg border border-gray-light animate-fade-in animate-delay-200">
-        <form action="{{ route('video-aulas.update', $videoAula->id) }}" method="POST" class="p-6 space-y-6">
+        <form action="{{ route('video-aulas.update', $oVideoAula->id) }}" method="POST" class="p-6 space-y-6">
             @csrf
             @method('PUT')
             <div class="border-b border-gray-light pb-6">
@@ -55,7 +55,7 @@
                             type="text" 
                             id="titulo" 
                             name="titulo" 
-                            value="{{ old('titulo', $videoAula->titulo) }}"
+                            value="{{ old('titulo', $oVideoAula->titulo) }}"
                             class="w-full px-3 py-2 border border-gray-light rounded-md focus:outline-none focus:ring-2 focus:ring-bordo-dark focus:border-bordo-dark text-gray-dark @error('titulo') border-red-500 @enderror"
                             placeholder="Ex: Fundamentos do Armlock"
                             required
@@ -72,7 +72,7 @@
                             type="url" 
                             id="url_youtube" 
                             name="url_youtube" 
-                            value="{{ old('url_youtube', 'https://www.youtube.com/watch?v=' . $videoAula->youtube_id) }}"
+                            value="{{ old('url_youtube', 'https://www.youtube.com/watch?v=' . $oVideoAula->youtube_id) }}"
                             class="w-full px-3 py-2 border border-gray-light rounded-md focus:outline-none focus:ring-2 focus:ring-bordo-dark focus:border-bordo-dark text-gray-dark @error('url_youtube') border-red-500 @enderror"
                             placeholder="Ex: https://www.youtube.com/watch?v=dQw4w9WgXcQ"
                             required
@@ -89,7 +89,7 @@
                             type="number" 
                             id="duracao_minutos" 
                             name="duracao_minutos" 
-                            value="{{ old('duracao_minutos', $videoAula->duracao_minutos) }}"
+                            value="{{ old('duracao_minutos', $oVideoAula->duracao_minutos) }}"
                             min="1" 
                             class="w-full px-3 py-2 border border-gray-light rounded-md focus:outline-none focus:ring-2 focus:ring-bordo-dark focus:border-bordo-dark text-gray-dark @error('duracao_minutos') border-red-500 @enderror"
                             placeholder="Ex: 15"
@@ -110,7 +110,7 @@
                         rows="4"
                         class="w-full px-3 py-2 border border-gray-light rounded-md focus:outline-none focus:ring-2 focus:ring-bordo-dark focus:border-bordo-dark text-gray-dark @error('descricao') border-red-500 @enderror"
                         placeholder="Uma breve descrição sobre o conteúdo da vídeo aula."
-                    >{{ old('descricao', $videoAula->descricao) }}</textarea>
+                    >{{ old('descricao', $oVideoAula->descricao) }}</textarea>
                     <p class="mt-1 text-xs text-gray-dark/70">Máximo de 1000 caracteres (opcional)</p>
                     @error('descricao')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -137,10 +137,10 @@
                             required
                         >
                             <option value="">Selecione uma modalidade</option>
-                            <option value="gi" {{ old('modalidade', $videoAula->modalidade) == 'gi' ? 'selected' : '' }}>🥋 Gi (Kimono)</option>
-                            <option value="no-gi" {{ old('modalidade', $videoAula->modalidade) == 'no-gi' ? 'selected' : '' }}>🤼 No-Gi (Sem Kimono)</option>
-                            <option value="mma" {{ old('modalidade', $videoAula->modalidade) == 'mma' ? 'selected' : '' }}>🥊 MMA</option>
-                            <option value="defesa-pessoal" {{ old('modalidade', $videoAula->modalidade) == 'defesa-pessoal' ? 'selected' : '' }}>🛡️ Defesa Pessoal</option>
+                            <option value="gi" {{ old('modalidade', $oVideoAula->modalidade) == 'gi' ? 'selected' : '' }}>🥋 Gi (Kimono)</option>
+                            <option value="no-gi" {{ old('modalidade', $oVideoAula->modalidade) == 'no-gi' ? 'selected' : '' }}>🤼 No-Gi (Sem Kimono)</option>
+                            <option value="mma" {{ old('modalidade', $oVideoAula->modalidade) == 'mma' ? 'selected' : '' }}>🥊 MMA</option>
+                            <option value="defesa-pessoal" {{ old('modalidade', $oVideoAula->modalidade) == 'defesa-pessoal' ? 'selected' : '' }}>🛡️ Defesa Pessoal</option>
                         </select>
                         @error('modalidade')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -157,10 +157,10 @@
                             required
                         >
                             <option value="">Selecione o nível</option>
-                            <option value="iniciante" {{ old('nivel', $videoAula->nivel) == 'iniciante' ? 'selected' : '' }}>🟢 Iniciante</option>
-                            <option value="intermediario" {{ old('nivel', $videoAula->nivel) == 'intermediario' ? 'selected' : '' }}>🟡 Intermediário</option>
-                            <option value="avancado" {{ old('nivel', $videoAula->nivel) == 'avancado' ? 'selected' : '' }}>🔴 Avançado</option>
-                            <option value="misto" {{ old('nivel', $videoAula->nivel) == 'misto' ? 'selected' : '' }}>🔵 Misto</option>
+                            <option value="iniciante" {{ old('nivel', $oVideoAula->nivel) == 'iniciante' ? 'selected' : '' }}>🟢 Iniciante</option>
+                            <option value="intermediario" {{ old('nivel', $oVideoAula->nivel) == 'intermediario' ? 'selected' : '' }}>🟡 Intermediário</option>
+                            <option value="avancado" {{ old('nivel', $oVideoAula->nivel) == 'avancado' ? 'selected' : '' }}>🔴 Avançado</option>
+                            <option value="misto" {{ old('nivel', $oVideoAula->nivel) == 'misto' ? 'selected' : '' }}>🔵 Misto</option>
                         </select>
                         @error('nivel')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>

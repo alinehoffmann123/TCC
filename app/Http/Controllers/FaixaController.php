@@ -7,15 +7,27 @@ use App\Models\FaixaCriterio;
 use Illuminate\Http\Request;
 
 class FaixaController extends Controller {
+
+    /**
+     * Exibe a lista de faixas cadastradas.
+     * Carrega também os critérios relacionados a cada faixa.
+     */
     public function index() {
         $aFaixas = Faixa::with('criterios')->orderBy('ordem')->get();
         return view('faixas.index', compact('aFaixas'));
     }
 
+    /**
+     * Exibe o formulário para cadastro de uma nova faixa.
+     */
     public function create() { 
       return view('faixas.cadastro');
     }
 
+    /**
+     * Realiza o cadastro de uma nova faixa e seus critérios.
+     * Valida os dados, cria a faixa e associa os critérios informados.
+     */
     public function store(Request $oRequest) {
         $aDados = $oRequest->validate([
               'nome'                 => 'required|string|max:100'

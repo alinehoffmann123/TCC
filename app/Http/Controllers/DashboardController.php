@@ -5,96 +5,95 @@ namespace App\Http\Controllers;
 use App\Models\Aluno;
 use App\Models\Turma;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
     public function index() {
-        $hoje             = Carbon::now();
-        $dataLimiteSemana = $hoje->copy()->subDays(7);
+        $sHoje             = Carbon::now();
+        $sDataLimiteSemana = $sHoje->copy()->subDays(7);
 
-        $nomesSemana   = ['domingo','segunda','terca','quarta','quinta','sexta','sabado'];
-        $diaSemanaNome = $nomesSemana[$hoje->dayOfWeek];
-        $alunosAtivos = Aluno::ativas()
+        $aDiasDaSemana   = ['domingo','segunda','terca','quarta','quinta','sexta','sabado'];
+        $sNomeDiasSemana = $aDiasDaSemana[$sHoje->dayOfWeek];
+        $iAlunosAtivos = Aluno::ativas()
             ->where('status', 'ativo')
             ->count();
 
-        $proximasAulasHoje = Turma::ativas()
+        $iProximasAulas = Turma::ativas()
             ->where('status', 'ativa')
-            ->whereJsonContains('dias_semana', $diaSemanaNome) 
+            ->whereJsonContains('dias_semana', $sNomeDiasSemana) 
             ->count();
 
-        $novasMatriculasSemana = Aluno::ativas()
-            ->whereDate('data_matricula', '>=', $dataLimiteSemana->toDateString())
+        $iNovasMatriculasSemana = Aluno::ativas()
+            ->whereDate('data_matricula', '>=', $sDataLimiteSemana->toDateString())
             ->count();
 
-        $anoAtual = $hoje->year;
+        $iAnoAtual = $sHoje->year;
 
-        $evolucao = Aluno::ativas()
+        $aEvolucao = Aluno::ativas()
             ->selectRaw('MONTH(data_matricula) as mes, COUNT(*) as total')
-            ->whereYear('data_matricula', $anoAtual)
+            ->whereYear('data_matricula', $iAnoAtual)
             ->groupBy('mes')
             ->orderBy('mes')
             ->get();
 
-        $evolucaoMeses = array_fill(1, 12, 0);
-        foreach ($evolucao as $row) {
-            $evolucaoMeses[(int) $row->mes] = (int) $row->total;
+        $aEvolucaoMeses = array_fill(1, 12, 0);
+        foreach ($aEvolucao as $row) {
+            $aEvolucaoMeses[(int) $row->mes] = (int) $row->total;
         }
 
-        $labelsMeses     = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-        $datasetEvolucao = array_values($evolucaoMeses);
+        $aLabelMeses   = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+        $aDataEvolucao = array_values($aEvolucaoMeses);
 
-        $ultimasDatas = DB::table('graduacoes as g')
+        $sUltimasDatas = DB::table('graduacoes as g')
             ->select('g.aluno_id', DB::raw('MAX(g.data_graduacao) as max_data'))
             ->groupBy('g.aluno_id');
 
-        $faixaAtualPorGraduacao = DB::table('graduacoes as gu')
-            ->joinSub($ultimasDatas, 'm', function ($join) {
-                $join->on('gu.aluno_id', '=', 'm.aluno_id')
+        $sFaixaAtualPorGraducao = DB::table('graduacoes as gu')
+            ->joinSub($sUltimasDatas, 'm', function ($oJoin) {
+                $oJoin->on('gu.aluno_id', '=', 'm.aluno_id')
                      ->on('gu.data_graduacao', '=', 'm.max_data');
             })
             ->select('gu.aluno_id', 'gu.faixa_nova_id');
 
-        $distFaixas = DB::table('alunos as a')
+        $sDistFaixa = DB::table('alunos as a')
             ->where('a.excluido', 'N')
             ->where('a.status', 'ativo')
-            ->leftJoinSub($faixaAtualPorGraduacao, 'ga', 'ga.aluno_id', '=', 'a.id')
-            ->leftJoin('faixas as fn', function ($join) {
-                $join->on(DB::raw('LOWER(fn.nome)'), '=', DB::raw('LOWER(a.faixa)'));
+            ->leftJoinSub($sFaixaAtualPorGraducao, 'ga', 'ga.aluno_id', '=', 'a.id')
+            ->leftJoin('faixas as fn', function ($oJoin) {
+                $oJoin->on(DB::raw('LOWER(fn.nome)'), '=', DB::raw('LOWER(a.faixa)'));
             })
             ->selectRaw('COALESCE(ga.faixa_nova_id, a.faixa_inicial_id, fn.id) AS faixa_id, COUNT(*) AS total')
             ->groupBy('faixa_id')
             ->get();
 
-        $faixas = DB::table('faixas')
+        $aFaixas = DB::table('faixas')
             ->orderBy('ordem')
             ->get(['id','nome']);
 
-        $labelsFaixas = [];
-        $dataFaixas   = [];
-        foreach ($faixas as $f) {
-            $labelsFaixas[] = $f->nome;
-            $match = $distFaixas->firstWhere('faixa_id', $f->id);
-            $dataFaixas[] = $match ? (int) $match->total : 0;
+        $aLabelsFaixa = [];
+        $aDataFaixas   = [];
+        foreach ($aFaixas as $aFaixa) {
+            $aLabelsFaixa[] = $aFaixa->nome;
+            $sMatch = $sDistFaixa->firstWhere('faixa_id', $aFaixa->id);
+            $aDataFaixas[] = $sMatch ? (int) $sMatch->total : 0;
         }
 
-        $recentesAlunos = Aluno::ativas()
+        $aAlunosRecentes = Aluno::ativas()
             ->latest('created_at')
             ->take(10)
             ->get()
-            ->map(function ($a) {
+            ->map(function ($aAluno) {
                 return [
                     'tipo'      => 'aluno',
-                    'iniciais'  => $this->iniciais($a->nome),
-                    'titulo'    => $a->nome,
+                    'iniciais'  => $this->iniciais($aAluno->nome),
+                    'titulo'    => $aAluno->nome,
                     'descricao' => 'novo cadastro de aluno.',
-                    'quando'    => $a->created_at,
+                    'quando'    => $aAluno->created_at,
                 ];
             });
 
-        $recentesTurmas = Turma::ativas()
+        $aTurmasRecentes = Turma::ativas()
             ->latest('created_at')
             ->take(10)
             ->get()
@@ -108,30 +107,30 @@ class DashboardController extends Controller
                 ];
             });
 
-        $atividades = $recentesAlunos
-            ->merge($recentesTurmas)
+        $aAtividadesRecentes = $aAlunosRecentes
+            ->merge($aTurmasRecentes)
             ->sortByDesc('quando')
-            ->take(10)
+            ->take(5)
             ->values();
 
         return view('dashboard', [
-              'alunosAtivos'           => $alunosAtivos
-            , 'proximasAulasHoje'      => $proximasAulasHoje
-            , 'novasMatriculasSemana'  => $novasMatriculasSemana
-            , 'labelsMeses'            => $labelsMeses
-            , 'datasetEvolucao'        => $datasetEvolucao
-            , 'labelsFaixas'           => $labelsFaixas
-            , 'dataFaixas'             => $dataFaixas 
-            , 'atividades'             => $atividades
+              'iAlunosAtivos'          => $iAlunosAtivos
+            , 'iProximasAulas'         => $iProximasAulas
+            , 'iNovasMatriculasSemana' => $iNovasMatriculasSemana
+            , 'aLabelMeses'            => $aLabelMeses
+            , 'aDataEvolucao'          => $aDataEvolucao
+            , 'aLabelsFaixa'           => $aLabelsFaixa
+            , 'aDataFaixas'            => $aDataFaixas 
+            , 'aAtividadesRecentes'    => $aAtividadesRecentes
         ]);
     }
 
-    private function iniciais(string $nome) {
-        $partes   = preg_split('/\s+/', trim($nome));
-        $iniciais = mb_strtoupper(mb_substr($partes[0] ?? '', 0, 1));
-        if (count($partes) > 1) {
-            $iniciais .= mb_strtoupper(mb_substr(end($partes), 0, 1));
+    private function iniciais(string $sNome) {
+        $iPartes   = preg_split('/\s+/', trim($sNome));
+        $sIniciais = mb_strtoupper(mb_substr($iPartes[0] ?? '', 0, 1));
+        if (count($iPartes) > 1) {
+            $sIniciais .= mb_strtoupper(mb_substr(end($iPartes), 0, 1));
         }
-        return $iniciais ?: '??';
+        return $sIniciais ?: '??';
     }
 }

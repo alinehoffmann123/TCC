@@ -10,6 +10,12 @@ use App\Models\Turma;
 use App\Models\Faixa;
 
 class AlunosController extends Controller {
+
+    /**
+     * Exibe a lista de alunos e professores ativos.
+     * Carrega dados relacionados: turmas, faixa inicial e última graduação.
+     * Faz paginação separada para alunos e professores.
+     */
     public function index(Request $oRequest) {
         $oPessoa = $oRequest->get('tab', 'alunos');
 
@@ -23,16 +29,23 @@ class AlunosController extends Controller {
             ->with(['turmas', 'faixaInicial', 'ultimaGraduacao.faixaNova'])
             ->paginate(10, ['*'], 'professores_page');
 
-
         return view('alunos.index', compact('aAlunos', 'aProfessores', 'oPessoa'));
     }
 
+    /**
+     * Exibe o formulário para cadastro de novo aluno ou professor.
+     * Carrega as turmas ativas e faixas disponíveis para seleção.
+     */
     public function create() {
         $aTurmas = Turma::ativas()->orderBy('nome')->get();
         $aFaixas = Faixa::orderBy('ordem')->get(['id','nome','ordem']);
         return view('alunos.cadastro', compact('aTurmas','aFaixas'));
     }
 
+    /**
+     * Realiza o cadastro de um novo aluno ou professor.
+     * Valida os dados, cria o registro, associa turmas e faixa inicial.
+     */
     public function store(Request $oRequest) {
         $bTemFaixaInicial = Schema::hasColumn('alunos', 'faixa_inicial_id');
 
@@ -103,6 +116,10 @@ class AlunosController extends Controller {
         return redirect()->route('alunos.index')->with('success', 'Cadastro realizado com sucesso!');
     }
 
+    /**
+     * Atualiza os dados de um aluno ou professor existente.
+     * Valida os dados, atualiza o registro, limpa turmas anteriores e associa as novas.
+     */
     public function update(Request $oRequest, string $iCodigo) {
         $aPessoa = Aluno::ativas()->findOrFail($iCodigo);
         $bTemFaixaInicial = Schema::hasColumn('alunos', 'faixa_inicial_id');
@@ -150,7 +167,6 @@ class AlunosController extends Controller {
             : ($oRequest->faixa ?: $aPessoa->faixa);
 
         $aPessoa->update($aDados);
-
         $aPessoa->todasTurmas()->detach();
         if ($oRequest->filled('turmas')) {
             foreach ($oRequest->turmas as $iCodigoTurma) {
@@ -174,11 +190,18 @@ class AlunosController extends Controller {
         return redirect()->route('alunos.index')->with('success', 'Cadastro atualizado com sucesso!');
     }
 
+    /**
+     * Exibe os detalhes de um aluno ativo, incluindo turmas associadas.
+     */
     public function show(string $iCodigo) {
         $aAluno = Aluno::ativas()->with('turmas')->findOrFail($iCodigo);
         return view('alunos.detalhe', compact('aAluno'));
     }
 
+    /**
+     * Exibe o formulário para edição de um aluno ativo.
+     * Carrega turmas ativas e faixas disponíveis.
+     */
     public function edit(string $iCodigo) {
         $aAluno  = Aluno::ativas()->with('turmas')->findOrFail($iCodigo);
         $aTurmas = Turma::ativas()->orderBy('nome')->get();
@@ -186,6 +209,9 @@ class AlunosController extends Controller {
         return view('alunos.alterar', compact('aAluno', 'aTurmas','aFaixas'));
     }
 
+    /**
+     * Marca um aluno como excluído (soft delete) alterando o campo 'excluido' para 'S'.
+     */
     public function destroy(string $iCodigo) {
         $aAluno = Aluno::findOrFail($iCodigo);
         $aAluno->excluido = 'S';
@@ -194,3 +220,4 @@ class AlunosController extends Controller {
         return redirect()->route('alunos.index')->with('success', 'Aluno removido com sucesso!');
     }
 }
+

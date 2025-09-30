@@ -104,20 +104,11 @@
                     </div>
                     <span class="text-white/90 drop-shadow-sm">Acompanhamento de evolução técnica</span>
                 </div>
-
-                <div class="flex items-center space-x-3 p-2 rounded-lg hover:bg-white/5 transition-all duration-200">
-                    <div class="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center shadow-sm">
-                        <svg class="w-4 h-4 text-white/90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                    <span class="text-white/90 drop-shadow-sm">Relatórios e análises detalhadas</span>
-                </div>
             </div>
 
             <div class="mt-12 pt-8 border-t border-white/20">
                 <p class="text-white/60 text-sm drop-shadow-sm">
-                    Desenvolvido especialmente para academias de artes marciais
+                    Desenvolvido especialmente para academias de Jiu-Jitsu
                 </p>
             </div>
         </div>
@@ -309,10 +300,10 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const inviteWrap = document.getElementById('invite-wrap');
+            const oAcesso = document.getElementById('invite-wrap');
             const updateInviteVisibility = () => {
-                const v = document.querySelector('input[name="role"]:checked')?.value;
-                inviteWrap?.classList.toggle('hidden', v !== 'professor');
+                const oValue = document.querySelector('input[name="role"]:checked')?.value;
+                oAcesso?.classList.toggle('hidden', oValue !== 'professor');
             };
             document.querySelectorAll('input[name="role"]').forEach(r => r.addEventListener('change', updateInviteVisibility));
             updateInviteVisibility();

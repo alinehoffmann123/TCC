@@ -13,7 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         /**
          * Registre apenas os ALIASES de middleware aqui.
-         * NÃO remova os grupos padrão do framework.
+         *
          */
 
         $middleware->alias([

@@ -23,12 +23,12 @@
 @endif
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in animate-delay-200">
-    @forelse ($videoAulas as $videoAula)
+    @forelse ($oVideoAulas as $oVideoAula)
     <div class="bg-white rounded-xl shadow-lg border border-gray-light overflow-hidden opacity-75 hover:opacity-100 transition-opacity duration-300">
         <div class="bg-gradient-to-r from-gray-500 to-gray-600 p-4">
             <div class="flex justify-between items-start">
                 <div>
-                    <h3 class="text-xl font-bold text-white mb-1">{{ $videoAula->titulo }}</h3>
+                    <h3 class="text-xl font-bold text-white mb-1">{{ $oVideoAula->titulo }}</h3>
                     <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
                         🗑️ Excluída
                     </span>
@@ -41,20 +41,20 @@
                     <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-1.25-3M15 10V5a3 3 0 00-3-3H9a3 3 0 00-3 3v5m6 4h.01M12 12h.01"></path>
                     </svg>
-                    <strong>ID YouTube:</strong> {{ $videoAula->youtube_id }}
+                    <strong>ID YouTube:</strong> {{ $oVideoAula->youtube_id }}
                 </div>
                 
                 <div class="flex items-center text-sm text-gray-dark">
                     <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
-                    <strong>Duração:</strong> {{ $videoAula->duracao_formatada }}
+                    <strong>Duração:</strong> {{ $oVideoAula->duracao_formatada }}
                 </div>
                 
                 <div class="flex items-center text-sm text-gray-dark">
                     @php
                         $modalidadeColor = '';
-                        switch ($videoAula->modalidade) {
+                        switch ($oVideoAula->modalidade) {
                             case 'gi': $modalidadeColor = 'bg-blue-100 text-blue-800'; break;
                             case 'no-gi': $modalidadeColor = 'bg-purple-100 text-purple-800'; break;
                             case 'mma': $modalidadeColor = 'bg-red-100 text-red-800'; break;
@@ -65,13 +65,13 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
                     </svg>
                     <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $modalidadeColor }}">
-                        {{ ucfirst(str_replace('-', ' ', $videoAula->modalidade)) }}
+                        {{ ucfirst(str_replace('-', ' ', $oVideoAula->modalidade)) }}
                     </span>
                 </div>
             </div>
 
             <div class="flex justify-center pt-4 border-t border-gray-light">
-                <form action="{{ route('video-aulas.restore', $videoAula->id) }}" method="POST" class="inline-block">
+                <form action="{{ route('video-aulas.restore', $oVideoAula->id) }}" method="POST" class="inline-block">
                     @csrf
                     <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md shadow-md transition-colors duration-200 flex items-center space-x-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -96,9 +96,9 @@
     @endforelse
 </div>
 
-@if($videoAulas->hasPages())
+@if($oVideoAulas->hasPages())
 <div class="mt-8 flex justify-center">
-    {{ $videoAulas->links() }}
+    {{ $oVideoAulas->links() }}
 </div>
 @endif
 @endsection

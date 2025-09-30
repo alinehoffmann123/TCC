@@ -10,23 +10,23 @@ class Turma extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nome',
-        'modalidade',
-        'nivel',
-        'instrutor',
-        'dias_semana',
-        'horario_inicio',
-        'horario_fim',
-        'capacidade_maxima',
-        'status',
-        'observacoes',
-        'excluido'
+          'nome'
+        , 'modalidade'
+        , 'nivel'
+        , 'instrutor'
+        , 'dias_semana'
+        , 'horario_inicio'
+        , 'horario_fim'
+        , 'capacidade_maxima'
+        , 'status'
+        , 'observacoes'
+        , 'excluido'
     ];
 
     protected $casts = [
-        'dias_semana' => 'array',
-        'horario_inicio' => 'datetime:H:i',
-        'horario_fim' => 'datetime:H:i',
+          'dias_semana'    => 'array'
+        , 'horario_inicio' => 'datetime:H:i'
+        , 'horario_fim'    => 'datetime:H:i'
     ];
 
     /**

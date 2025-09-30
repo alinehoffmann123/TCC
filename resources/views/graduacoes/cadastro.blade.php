@@ -8,7 +8,7 @@
     <div class="mb-4 p-3 bg-red-100 text-red-700 rounded">{{ implode(', ', $errors->all()) }}</div>
   @endif
 
-  <form method="POST" action="{{ route('graduacoes.store', $alunoId) }}">
+  <form method="POST" action="{{ route('graduacoes.store', $iCodigoAluno) }}">
     @csrf
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div>
@@ -40,7 +40,7 @@
     </div>
 
     <div class="flex justify-end mt-6 space-x-3">
-      <a href="{{ route('graduacoes.index', $alunoId) }}" class="bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded">Cancelar</a>
+      <a href="{{ route('graduacoes.index', $iCodigoAluno) }}" class="bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded">Cancelar</a>
       <button class="bg-bordo-dark hover:bg-bordo-hover text-white px-5 py-2 rounded">Registrar</button>
     </div>
   </form>
