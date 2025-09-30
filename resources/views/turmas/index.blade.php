@@ -15,7 +15,7 @@
             $aRole = auth()->user()->role ?? null;
             $bProfessor = in_array($aRole, ['professor']);
         @endphp
-        <@if($bProfessor)
+        @if($bProfessor)
             <div class="flex space-x-4">
                 <a href="{{ route('turmas.create') }}" class="bg-bordo-dark hover:bg-bordo-hover text-white font-semibold py-2 px-4 rounded-md shadow-md transition-colors duration-200 flex items-center space-x-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

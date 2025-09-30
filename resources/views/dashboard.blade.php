@@ -17,7 +17,8 @@
                 <h3 class="text-lg font-semibold text-gray-dark">Alunos Ativos</h3>
                 <div class="p-2 rounded-full bg-bordo-dark/10 text-bordo-dark">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M9 20H4v-2a3 3 0 015.356-1.857M12 14a3 3 0 100-6 3 3 0 000 6z"/>
                     </svg>
                 </div>
             </div>
@@ -29,8 +30,9 @@
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-semibold text-gray-dark">Próximas Aulas</h3>
                 <div class="p-2 rounded-full bg-bordo-dark/10 text-bordo-dark">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 0h6m-6 0l-2 13a2 2 0 002 2h8a2 2 0 002-2L16 7"></path>
+                   <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 7V3h8v4m-8 0h8M5 11h14M5 19h14M7 15h4"/>
                     </svg>
                 </div>
             </div>
@@ -43,7 +45,8 @@
                 <h3 class="text-lg font-semibold text-gray-dark">Novas Matrículas</h3>
                 <div class="p-2 rounded-full bg-bordo-dark/10 text-bordo-dark">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M18 9v6m-3-3h6M16 21H8a4 4 0 01-4-4V7a4 4 0 014-4h8a4 4 0 014 4v10a4 4 0 01-4 4z"/>
                     </svg>
                 </div>
             </div>
@@ -71,23 +74,30 @@
     <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-light animate-fade-in animate-delay-400">
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-xl font-semibold text-gray-dark">Atividades Recentes</h3>
-            <div class="flex space-x-2">
-                <a href="{{ route('alunos.create') }}"
-                class="inline-flex items-center px-3 py-2 bg-bordo-dark text-white text-sm font-medium rounded-lg shadow hover:bg-bordo-dark/90 transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                    </svg>
-                    Aluno
-                </a>
-                <a href="{{ route('turmas.create') }}"
-                class="inline-flex items-center px-3 py-2 bg-gray-700 text-white text-sm font-medium rounded-lg shadow hover:bg-gray-800 transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6-4h6m-6 8h6m2 4H7a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v12a2 2 0 01-2 2z"/>
-                    </svg>
-                    Turma
-                </a>
+             @php
+                $aRole = auth()->user()->role ?? null;
+                $bProfessor = in_array($aRole, ['professor']);
+            @endphp
+            
+                <div class="flex space-x-2">
+                    @if($bProfessor)
+                    <a href="{{ route('alunos.create') }}"
+                    class="inline-flex items-center px-3 py-2 bg-bordo-dark text-white text-sm font-medium rounded-lg shadow hover:bg-bordo-dark/90 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        Aluno
+                    </a>
+                    <a href="{{ route('turmas.create') }}"
+                    class="inline-flex items-center px-3 py-2 bg-gray-700 text-white text-sm font-medium rounded-lg shadow hover:bg-gray-800 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6-4h6m-6 8h6m2 4H7a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v12a2 2 0 01-2 2z"/>
+                        </svg>
+                        Turma
+                    </a>
+                    @endif
+                </div>
             </div>
-        </div>
 
         <ul class="space-y-4">
             @forelse($aAtividadesRecentes as $aAtividade)
@@ -117,26 +127,26 @@
   <script src="https://code.highcharts.com/modules/accessibility.js" defer></script>
   <script id="dashboard-json" type="application/json">
   {!! json_encode([
-      'aLabelsMeses'  => array_values($aLabelMeses ?? []),
+      'aLabelMeses'   => array_values($aLabelMeses ?? []),
       'aDataEvolucao' => array_values($aDataEvolucao ?? []),
       'aLabelsFaixa'  => array_values($aLabelsFaixa ?? []),
-      'aDatasFaixa'   => array_values($aDataFaixas ?? []),
+      'aDataFaixas'   => array_values($aDataFaixas ?? []),
   ], JSON_UNESCAPED_UNICODE) !!}
   </script>
 
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      const oElemento = document.getElementById('dashboard-json');
-      let oData = {aLabelsMeses:[],aDataEvolucao:[],aLabelsFaixa:[],aDatasFaixa:[]};
+      const el = document.getElementById('dashboard-json');
+      let data = {aLabelMeses:[],aDataEvolucao:[],aLabelsFaixa:[],aDataFaixas:[]};
       try { 
-        if (oElemento) {
-         oData = JSON.parse(oElemento.textContent);   
+        if (el) {
+         data = JSON.parse(el.textContent);   
         } 
-      } catch(oExept) { 
-        console.error('JSON do dashboard inválido', oExept); 
+      } catch(e) { 
+        console.error('JSON do dashboard inválido', e); 
       }
 
-      const aCores = ['#4B001E','#73002A','#6B7280','#9CA3AF','#111827','#374151'];
+      const cores = ['#4B001E','#73002A','#6B7280','#9CA3AF','#111827','#374151'];
 
       const OEvolucao = document.getElementById('hcEvolucao');
       if (OEvolucao) {
@@ -149,7 +159,7 @@
             text: null 
           },
           xAxis: { 
-            categories: oData.aLabelsMeses
+            categories: data.aLabelMeses
             , tickLength: 0 
           },
           yAxis: { 
@@ -162,8 +172,8 @@
           },
           series: [{
             name: 'Matrículas',
-            oData: (oData.aDataEvolucao || []).map(n => Number(n) || 0),
-            color: aCores[0],
+            data: (data.aDataEvolucao || []).map(n => Number(n) || 0),
+            color: cores[0],
           }],
           tooltip: { 
             shared: true
@@ -186,7 +196,7 @@
                 text: null 
             },
             xAxis: {
-                categories: oData.aLabelsFaixa
+                categories: data.aLabelsFaixa
                 , tickLength: 0
                 , crosshair: true
             },
@@ -220,7 +230,7 @@
             },
             series: [{
                 name: 'Alunos'
-                , oData: (data.aDatasFaixa || []).map(n => Number(n) || 0)
+                , data: (data.aDataFaixas || []).map(n => Number(n) || 0)
                 , colorByPoint: true
             }],
             colors: ['#4B001E','#73002A','#6B7280','#9CA3AF','#111827','#374151'],

@@ -18,7 +18,7 @@
         $role = auth()->user()->role ?? null;
         $bProfessor = in_array($role, ['professor']);
     @endphp
-    <@if($bProfessor)
+    @if($bProfessor)
       <div class="flex space-x-4">
         <a href="{{ route('alunos.create') }}"
           class="bg-bordo-dark hover:bg-bordo-hover text-white font-semibold py-2 px-4 rounded-md shadow-md transition-colors duration-200 flex items-center space-x-2">

@@ -7,8 +7,22 @@ use App\Models\Turma;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
-class DashboardController extends Controller
-{
+class DashboardController extends Controller {
+
+    /**
+     * Exibe o painel principal do sistema (dashboard).
+     *
+     * Essa função monta os dados que alimentam os cards, gráficos e lista de atividades recentes
+     * no dashboard, incluindo:
+     * - Quantidade de alunos ativos
+     * - Próximas aulas na semana
+     * - Novas matrículas nos últimos 7 dias
+     * - Evolução de matrículas no ano (gráfico mensal)
+     * - Distribuição de faixas dos alunos
+     * - Atividades recentes (alunos e turmas criados recentemente)
+     *
+     * @return \Illuminate\View\View
+     */
     public function index() {
         $sHoje             = Carbon::now();
         $sDataLimiteSemana = $sHoje->copy()->subDays(7);
@@ -97,13 +111,13 @@ class DashboardController extends Controller
             ->latest('created_at')
             ->take(10)
             ->get()
-            ->map(function ($t) {
+            ->map(function ($aTurma) {
                 return [
                       'tipo'      => 'turma'
-                    , 'iniciais'  => $this->iniciais($t->nome)
+                    , 'iniciais'  => $this->iniciais($aTurma->nome)
                     , 'titulo'    => 'Nova turma'
-                    , 'descricao' => $t->nome . ' adicionada.'
-                    , 'quando'    => $t->created_at
+                    , 'descricao' => $aTurma->nome . ' adicionada.'
+                    , 'quando'    => $aTurma->created_at
                 ];
             });
 
@@ -125,6 +139,16 @@ class DashboardController extends Controller
         ]);
     }
 
+    /**
+     * Gera as iniciais de um nome.
+     *
+     * Exemplo:
+     * - "Maria Silva" => "MS"
+     * - "João" => "J"
+     *
+     * @param string $sNome Nome completo da pessoa
+     * @return string Iniciais em maiúsculo, ou "??" caso não seja possível gerar
+     */
     private function iniciais(string $sNome) {
         $iPartes   = preg_split('/\s+/', trim($sNome));
         $sIniciais = mb_strtoupper(mb_substr($iPartes[0] ?? '', 0, 1));

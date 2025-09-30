@@ -61,6 +61,11 @@ Route::middleware('auth')->group(function () {
         ->name('turmas.index')->middleware('role:admin,professor,aluno');
     Route::get('/turmas/{turma}', [TurmasController::class, 'show'])
         ->name('turmas.show')->middleware('role:admin,professor,aluno')->whereNumber('turma');
+    
+    Route::get('/turmas/{turma}/alunos', [TurmasController::class, 'alunos'])
+        ->name('turmas.alunos')
+        ->middleware('role:admin,professor,aluno')
+        ->whereNumber('turma');
 
     Route::middleware('role:admin,professor')->group(function () {
         Route::get('/turmas/create',       [TurmasController::class, 'create'])->name('turmas.create');
@@ -70,7 +75,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/turmas/{turma}',   [TurmasController::class, 'destroy'])->name('turmas.destroy')->whereNumber('turma');
 
         Route::post('/turmas/{turma}/restaurar',       [TurmasController::class, 'restore'])->name('turmas.restore')->whereNumber('turma');
-        Route::get('/turmas/{turma}/alunos',           [TurmasController::class, 'alunos'])->name('turmas.alunos')->whereNumber('turma');
+        // Route::get('/turmas/{turma}/alunos',           [TurmasController::class, 'alunos'])->name('turmas.alunos')->whereNumber('turma');
         Route::post('/turmas/{turma}/matricular',      [TurmasController::class, 'matricularAluno'])->name('turmas.matricular')->whereNumber('turma');
         Route::delete('/turmas/{turma}/alunos/{aluno}',[TurmasController::class, 'removerAluno'])->name('turmas.remover-aluno')->whereNumber('turma')->whereNumber('aluno');
     });
