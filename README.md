@@ -11,19 +11,16 @@ O **FightGym System** é um sistema desenvolvido para auxiliar na gestão admini
 
 O projeto surgiu da necessidade observada nas academias, que geralmente utilizam métodos manuais ou terceirizados para controle de seus processos, gerando custos elevados e desorganização.  
 
-Este sistema busca oferecer uma solução moderna, prática e escalável, utilizando tecnologias atuais como **Laravel**, **Vue.js**, **MySQL**, **Tailwind CSS** e **Docker**, com infraestrutura preparada para nuvem (**AWS** ready).
+Este sistema busca oferecer uma solução moderna, prática e escalável, utilizando tecnologias atuais como **Laravel**, **Alpine.js**, **MySQL**, **Tailwind CSS** e **Docker**.
 
 ---
 
 ## 🚀 Tecnologias Utilizadas
 
 - 🧠 **Backend:** PHP 8 + Laravel
-- 🎨 **Frontend:** Vue.js + Tailwind CSS + Vite
+- 🎨 **Frontend:** Alpine.js + Tailwind CSS + Vite
 - 🗄️ **Banco de Dados:** MySQL
 - 🐳 **Containers:** Docker + Docker Compose
-- ☁️ **Infraestrutura:** AWS (EC2, RDS, S3)
-- 🌐 **Servidor Web:** Nginx (via Docker)
-- 🐘 **Gerenciador de Banco:** phpMyAdmin (via Docker)
 
 ---
 
@@ -31,10 +28,8 @@ Este sistema busca oferecer uma solução moderna, prática e escalável, utiliz
 
 - ✅ Cadastro e gerenciamento de alunos
 - ✅ Cadastro de mestres/professores
-- ✅ Controle de mensalidades e pagamentos
 - ✅ Agendamento de aulas
 - ✅ Acompanhamento de desempenho dos alunos
-- ✅ Controle financeiro
 - ✅ Interface limpa, responsiva e amigável
 
 ---
@@ -45,7 +40,6 @@ Este sistema busca oferecer uma solução moderna, prática e escalável, utiliz
 
 - Docker
 - Docker Compose
-- Node.js + NPM
 - Composer
 
 ### 🐳 Rodando com Docker
@@ -104,27 +98,6 @@ npm run dev
 ```bash
 docker-compose up -d --build
 ```
-
----
-
-## 🗃️ Estrutura de Pastas (Backend)
-
-```
-├── app
-├── bootstrap
-├── config
-├── database
-│   ├── migrations
-│   └── seeders
-├── public
-├── resources
-│   └── views
-├── routes
-│   └── api.php
-├── storage
-├── tests
-```
-
 ---
 
 ## 🏗️ Arquitetura Utilizada
@@ -139,9 +112,3 @@ docker-compose up -d --build
 - **Aline Fernanda Hoffmann**  
 🎓 Bacharelanda em Sistemas de Informação — UNIDAVI  
 📧 aline.hoffmann@unidavi.edu.br
-
----
-
-## ⭐ Licença
-
-Este projeto está licenciado sob a licença MIT — sinta-se livre para usar, estudar e modificar.
