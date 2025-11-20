@@ -13,8 +13,10 @@
       </h2>
       <p class="text-gray-dark/70 mt-1">
         Faixa atual: <strong>{{ $oFaixaAtual->nome ?? '—' }}</strong>
-        @if($oFaixaAtual)
-          • Próxima: <strong>{{ $oProximaFaixa->nome }}</strong>
+        @if(!empty($oProximaFaixa))
+            • Próxima: <strong>{{ $oProximaFaixa->nome }}</strong>
+        @else
+            • Próxima: <strong>—</strong>
         @endif
       </p>
     </div>
@@ -50,9 +52,13 @@
         </div>
         @if($oFaixaAtual)
           <div class="text-gray-600 text-sm">
-            Próxima faixa: <strong>{{ $oProximaFaixa->nome }}</strong>
-            @if($sDataPromocaoEst)
-              • Elegível em: <strong>{{ $sDataPromocaoEst->format('d/m/Y') }}</strong>
+            @if($oProximaFaixa)
+              Próxima faixa: <strong>{{ $oProximaFaixa->nome }}</strong>
+              @if($sDataPromocaoEst)
+                • Elegível em: <strong>{{ $sDataPromocaoEst->format('d/m/Y') }}</strong>
+              @endif
+            @else
+              Próxima faixa: <strong>— (última faixa)</strong>
             @endif
           </div>
         @endif
@@ -74,7 +80,7 @@
             Forçar Grau
           </button>
 
-          @if($oFaixaAtual)
+          @if($oFaixaAtual && $oProximaFaixa)
             @if($bElegivelPromocao)
               <form method="POST" action="{{ route('alunos.evolucao.promover', $oAluno->id) }}">
                 @csrf

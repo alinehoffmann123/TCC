@@ -204,11 +204,16 @@ class EvolucaoAlunoController extends Controller {
         $iGrausTotais   = ($sFaixaAtual->graus_totais ?? 4);
         $iTempoMinMeses = ($sFaixaAtual->tempo_min_meses ?? 18);
 
-        $iQuantidadeGraus = Grau::where('aluno_id',$oAluno->id)->where('faixa_id',$sFaixaAtual->id)
+        $iQuantidadeGraus = Grau::where('aluno_id',$oAluno->id)
+            ->where('faixa_id',$sFaixaAtual->id)
             ->when($sInicioFaixa, fn($oQuery)=>$oQuery->whereDate('data', '>=', $sInicioFaixa))
             ->count();
 
-        $iProximo         = min($iGrausTotais, $iQuantidadeGraus + 1);
+        if ($iQuantidadeGraus >= $iGrausTotais) {
+            return back()->with('error', "O aluno já possui todos os {$iGrausTotais} graus desta faixa.");
+        }
+
+        $iProximo         = $iQuantidadeGraus + 1;
         $iMesesDecorridos = $sInicioFaixa ? Carbon::parse($sInicioFaixa)->diffInMonths(now()) : 0;
         $iMesesPorGrau    = max(1, (int)ceil($iTempoMinMeses / max(1,$iGrausTotais)));
         $iMinMesesProx    = $iProximo * $iMesesPorGrau;
@@ -220,13 +225,22 @@ class EvolucaoAlunoController extends Controller {
             return back()->with('error', 'Ainda não elegível para o próximo grau.');
         }
 
+        $oGrauExistente = Grau::where('aluno_id', $oAluno->id)
+            ->where('faixa_id', $sFaixaAtual->id)
+            ->where('numero', $iProximo)
+            ->first();
+
+        if ($oGrauExistente) {
+            return back()->with('error', "O grau {$iProximo} já foi cadastrado para este aluno nesta faixa.");
+        }
+
         $oGrau = Grau::create([
-            'aluno_id'       => $oAluno->id,
-            'faixa_id'       => $sFaixaAtual->id,
-            'numero'         => $iProximo,
-            'data'           => now()->toDateString(),
-            'instrutor_nome' => $oRequest->input('instrutor_nome'),
-            'observacoes'    => $oRequest->input('observacoes'),
+              'aluno_id'       => $oAluno->id
+            , 'faixa_id'       => $sFaixaAtual->id
+            , 'numero'         => $iProximo
+            , 'data'           => now()->toDateString()
+            , 'instrutor_nome' => $oRequest->input('instrutor_nome')
+            , 'observacoes'    => $oRequest->input('observacoes')
         ]);
 
         Audit::create([
@@ -329,12 +343,9 @@ class EvolucaoAlunoController extends Controller {
      * @return array [int $iProgresso, array $aQuebra]
      */
     private function calculaProgresso($oAluno, $sFaixaAtual, $oProximaFaixa, $ultimaGraduacao) {
-        if (!$sFaixaAtual)   {
+        // Se não tiver faixa atual, não há o que calcular
+        if (!$sFaixaAtual) {
             return [0, []];
-        }
-
-        if (!$oProximaFaixa) {
-            return [100, []];
         }
 
         $sInicio = $ultimaGraduacao?->data_graduacao ?? ($oAluno->data_matricula ?? $oAluno->created_at);
@@ -348,10 +359,18 @@ class EvolucaoAlunoController extends Controller {
             ->when($sInicio, fn($oQuery) => $oQuery->whereDate('data', '>=', $sInicio))
             ->count();
 
+        // ✅ Se já tem todos os graus da faixa, considera 100%
+        if ($iGrausTotais > 0 && $iQuantidadeGraus >= $iGrausTotais) {
+            return [100, []];
+        }
+
+        // Continua calculando normalmente, mesmo que não exista próxima faixa
         $iGraus = $iGrausTotais   > 0 ? min(1, $iQuantidadeGraus / $iGrausTotais) : 0;
-        $iTempo = $iTempoMinMeses > 0 ? min(1, $iMeses    / $iTempoMinMeses) : 0;
+        $iTempo = $iTempoMinMeses > 0 ? min(1, $iMeses          / $iTempoMinMeses) : 0;
 
         $aProgresso = round((($iGraus * 0.6) + ($iTempo * 0.4)) * 100);
         return [$aProgresso, []];
     }
+
+
 }
